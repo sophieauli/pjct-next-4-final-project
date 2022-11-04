@@ -1,0 +1,18 @@
+{
+  "name": "Diego Event Planner PWA",
+  "short_name": "Diego PWA",
+  "theme_color": "#ffffff",
+  "background_color": "#004740",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "App-Icon-Logo-Diego.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+  ],
+  "splash_pages": null
+}
