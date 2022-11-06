@@ -2,7 +2,6 @@ import { config } from 'dotenv-safe';
 import postgres from 'postgres';
 
 // config function loads all variables from .env file
-
 config();
 
 // typescript type for connection function:

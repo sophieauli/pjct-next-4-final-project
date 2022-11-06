@@ -45,17 +45,15 @@ export async function createUser(
   username: string,
   password_hash: string,
 ) {
-  const [userWithoutPasswordHash] = await sql<
-    { id: number; username: string }[]
-  >`
+  const [userWithoutPassword] = await sql<{ id: number; username: string }[]>`
   INSERT INTO users
     (name, username, password_hash)
   VALUES
     (${name}, ${username}, ${password_hash})
   RETURNING
-  id,
-  username
+    id,
+    username
   `;
 
-  return userWithoutPasswordHash;
+  return userWithoutPassword!;
 }

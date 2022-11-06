@@ -40,7 +40,9 @@ export default async function RegisterHandler(
     const passwordHash = await bcrypt.hash(request.body.password, 12);
     console.log(passwordHash);
 
-    // 4. in a fourth and final step we are going to run the sql query to create the record in the database. First we are going to await the repsonse from the database>user.ts function userWithoutPasswordHash
+    // 4. run the sql query to create the record in the database:
+
+    // First we are going to await the response from the database>user.ts function userWithoutPasswordHash
 
     await user;
   }

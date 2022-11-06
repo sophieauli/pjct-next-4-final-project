@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useState } from 'react';
 import { RegisterResponseBody } from './api/register';
 
@@ -22,10 +21,13 @@ export default function Register() {
         password,
       }),
     });
+
+    // packing the api response into a variable and giving it a type at the end (either as a type error or type user because those are the types we defined it with in api/register file):
+
     const registerResponseBody =
       (await registerResponse.json()) as RegisterResponseBody;
 
-    // giving the responsebody a specific type, either as a type error or type user:
+    // we still need to "set" the errors to whatever error messages are coming from the response body:
 
     if ('errors' in registerResponseBody) {
       setErrors(registerResponseBody.errors);

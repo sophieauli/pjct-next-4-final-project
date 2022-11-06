@@ -6,6 +6,7 @@ import Head from 'next/head';
 import Layout from '../components/Layout.js';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  // the component's props are Component and pageProps for which you then define the type AppProps!
   return (
     <>
       <Global

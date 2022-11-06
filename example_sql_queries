@@ -1,0 +1,6 @@
+CREATE TABLE students (
+  id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  first_name varchar(40) NOT NULL,
+  last_name varchar(40) NOT NULL,
+  address_id integer UNIQUE REFERENCES addresses (id)
+);
