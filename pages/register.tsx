@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { RegisterResponseBody } from './api/register';
 
 export default function Register() {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
@@ -17,7 +17,7 @@ export default function Register() {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        name: name.toLowerCase(),
+        firstName: firstName.toLowerCase(),
         username: username.toLowerCase(),
         password,
       }),
@@ -57,11 +57,11 @@ export default function Register() {
       <main>
         <h2>Join Diego</h2>
         <label>
-          name
+          first name
           <input
-            value={name}
+            value={firstName}
             onChange={(event) => {
-              setName(event.currentTarget.value);
+              setFirstName(event.currentTarget.value);
             }}
           />
         </label>

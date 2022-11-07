@@ -22,8 +22,10 @@ export default async function RegisterHandler(
 
     if (
       // checking whether it is provided as a string:
+      typeof request.body.firstName !== 'string' ||
       typeof request.body.username !== 'string' ||
       typeof request.body.password !== 'string' ||
+      !request.body.firstName ||
       !request.body.username ||
       !request.body.password
     ) {
@@ -46,9 +48,9 @@ export default async function RegisterHandler(
     // 4. run the sql query to create the record in the database:
 
     const userWithoutPassword = await createUser(
+      request.body.firstName,
       request.body.username,
       passwordHash,
-      request.body.firstName,
     );
 
     // 5. create a csrf token, which is a secret, user-specific token to prevent Cross-Site Request Forgeries:
