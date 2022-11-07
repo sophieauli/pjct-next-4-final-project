@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate": "dotenv ley"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -16,9 +17,11 @@
     "@types/react": "18.0.24",
     "@types/react-dom": "18.0.8",
     "bcrypt": "^5.1.0",
+    "dotenv-cli": "^6.0.0",
     "dotenv-safe": "^8.2.0",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.1",
+    "ley": "^0.8.1",
     "next": "13.0.1",
     "react": "^18.2.0",
     "react-dom": "18.2.0",

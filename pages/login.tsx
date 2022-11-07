@@ -30,9 +30,17 @@ export default function Login() {
       setErrors(loginResponseBody.errors);
       return console.log(loginResponseBody.errors);
     }
-    if (router.query.returnTo && !Array.isArray(router.query.returnTo)) {
-      return await router.push(router.query.returnTo);
+    // by assiging it a variable, we are going to limit redirects to pages from my domain:
+    const returnTo = router.query.returnTo;
+
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      /^\/[a-zA-Z0-9?=/]*$/.test(returnTo)
+    ) {
+      return await router.push(returnTo);
     }
+    await router.push(`/profile/${loginResponseBody.user.username}`);
   }
 
   return (

@@ -29,7 +29,8 @@ export async function getUserWithPasswordHashByUsername(username: string) {
 
   const [user] = await sql<User[]>`
   SELECT
-    *
+    username,
+    password_hash
   FROM
     users
   WHERE
@@ -41,15 +42,15 @@ export async function getUserWithPasswordHashByUsername(username: string) {
 // the createUser function will with params of name, username and pw hash that is adding a user to the database with that information (objects) and then returning the user without the pw:
 
 export async function createUser(
-  name: string,
+  first_name: string,
   username: string,
   password_hash: string,
 ) {
   const [userWithoutPassword] = await sql<{ id: number; username: string }[]>`
   INSERT INTO users
-    (name, username, password_hash)
+    (first_name, username, password_hash)
   VALUES
-    (${name}, ${username}, ${password_hash})
+    (${first_name}, ${username}, ${password_hash})
   RETURNING
     id,
     username

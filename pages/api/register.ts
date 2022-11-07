@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getUserByUsername } from '../../database/users';
+import { createSession } from '../../database/sessions';
+import { createUser, getUserByUsername } from '../../database/users';
+
+// import { createCsrfSecret } from '../../utils/csrf';
 
 // body is part of the message we send with our api, we can also define its data type:
 
@@ -42,10 +45,33 @@ export default async function RegisterHandler(
 
     // 4. run the sql query to create the record in the database:
 
-    // First we are going to await the response from the database>user.ts function userWithoutPasswordHash
+    const userWithoutPassword = await createUser(
+      request.body.username,
+      passwordHash,
+      request.body.firstName,
+    );
 
-    await user;
+    // 5. create a csrf token, which is a secret, user-specific token to prevent Cross-Site Request Forgeries:
+    //   const secret = await await createCsrfSecret();
+    // }
+
+    // 6.Create a session token and serialize a cookie with the token:
+
+    //   const session = await createSession(
+    //     userWithoutPassword.id,
+    //     crypto.randomBytes(80).toString('base64'),
+    //     secret,
+    //   );
+
+    //   const serializedCookie = createSerializedRegisterSessionTokenCookie(
+    //     session.token,
+    //   );
+
+    //   response
+    //     .status(200)
+    //     .setHeader('Set-Cookie', serializedCookie)
+    //     .json({ user: { username: userWithoutPassword.username } });
+    // } else {
+    //   response.status(401).json({ errors: [{ message: 'Method not allowed' }] });
   }
-
-  // 4. run the sql query to store user in database:
 }

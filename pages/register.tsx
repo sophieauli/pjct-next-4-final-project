@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { RegisterResponseBody } from './api/register';
 
@@ -8,6 +8,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
+  const router = useRouter();
 
   async function registerHandler() {
     const registerResponse = await fetch('/api/register', {
@@ -34,6 +35,17 @@ export default function Register() {
 
       return console.log(registerResponseBody.errors);
     }
+    // check login.tsx for explanation of logic below:
+
+    const returnTo = router.query.returnTo;
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      /^\/[a-zA-Z0-9?=/]*$/.test(returnTo)
+    ) {
+      return await router.push(returnTo);
+    }
+    await router.push(`/profile/${registerResponseBody.user.username}`);
   }
   return (
     <div>

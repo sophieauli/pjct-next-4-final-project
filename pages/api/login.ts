@@ -1,10 +1,11 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import {
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
 } from 'next';
+import { createSession } from '../../database/sessions';
 import {
   getUserByUsername,
   getUserWithPasswordHashByUsername,
@@ -59,11 +60,19 @@ export default async function LoginHandler(
 
     console.log('password is valid=', isPasswordValid);
 
-    // 4. create a csrf secret:
+    // optional step 4: create a csrf secret:
 
     // 5. create a session token and serialize a cookie with that token:
 
-    await user;
+    // 5.1. this function is a callback function. First we await the result from createSession with which we create a session in our database. Then crypto.randomBytes etc is going to create a 110 length token; 110 because that is the length of characters we defined for the column "session-token" in the table.
+    // Additional note to self: Base64 is a binary-to-text algorithm used to convert data to plain text in order to prevent data corruption when transmitting data between different storage mediums:
+
+    const session = await createSession(
+      user.id,
+      crypto.randomBytes(80).toString('base64'),
+    );
+
+    console.log(session);
   }
 
   // 4. run the sql query to store user in database:

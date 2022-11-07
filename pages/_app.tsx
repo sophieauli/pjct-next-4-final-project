@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import '@fontsource/saira';
 import { css, Global } from '@emotion/react';
 import { AppProps } from 'next/app';
-import Head from 'next/head';
+// import Head from 'next/head';
 import Layout from '../components/Layout.js';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
