@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { getUserByUsername, User } from '../../database/users';
 
 type Props = {
@@ -7,6 +8,19 @@ type Props = {
 };
 
 export default function UserProfile(props: Props) {
+  const router = useRouter();
+  async function logoutHandler() {
+    const returnTo = router.query.returnTo;
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      /^\/[a-zA-Z0-9?=/]*$/.test(returnTo)
+    ) {
+      return await router.push(returnTo);
+    }
+    await router.push(`/login`);
+  }
+
   if (!props.user) {
     // if profile can't be found, return the following page / passing a user not found component:
     return (
@@ -19,6 +33,7 @@ export default function UserProfile(props: Props) {
       </div>
     );
   }
+
   // in other cases, return regular profile page:
   return (
     <div>
@@ -30,6 +45,13 @@ export default function UserProfile(props: Props) {
         />
       </Head>
       id: {props.user.id} username: {props.user.username}
+      <button
+        onClick={async () => {
+          await logoutHandler();
+        }}
+      >
+        logout
+      </button>
     </div>
   );
 }

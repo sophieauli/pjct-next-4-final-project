@@ -1,8 +1,10 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createSession } from '../../database/sessions';
 import { createUser, getUserByUsername } from '../../database/users';
+import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 // import { createCsrfSecret } from '../../utils/csrf';
 
@@ -53,27 +55,26 @@ export default async function RegisterHandler(
       passwordHash,
     );
 
-    // 5. create a csrf token, which is a secret, user-specific token to prevent Cross-Site Request Forgeries:
+    // 5. optional: create a csrf token, which is a secret, user-specific token to prevent Cross-Site Request Forgeries:
     //   const secret = await await createCsrfSecret();
     // }
 
     // 6.Create a session token and serialize a cookie with the token:
 
-    //   const session = await createSession(
-    //     userWithoutPassword.id,
-    //     crypto.randomBytes(80).toString('base64'),
-    //     secret,
-    //   );
+    const session = await createSession(
+      userWithoutPassword.id,
+      crypto.randomBytes(80).toString('base64'),
+    );
 
-    //   const serializedCookie = createSerializedRegisterSessionTokenCookie(
-    //     session.token,
-    //   );
+    const serializedCookie = createSerializedRegisterSessionTokenCookie(
+      session.token,
+    );
 
-    //   response
-    //     .status(200)
-    //     .setHeader('Set-Cookie', serializedCookie)
-    //     .json({ user: { username: userWithoutPassword.username } });
-    // } else {
-    //   response.status(401).json({ errors: [{ message: 'Method not allowed' }] });
+    response
+      .status(200)
+      .setHeader('Set-Cookie', serializedCookie)
+      .json({ user: { username: userWithoutPassword.username } });
+  } else {
+    response.status(401).json({ errors: [{ message: 'Method not allowed' }] });
   }
 }

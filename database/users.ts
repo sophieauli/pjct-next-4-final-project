@@ -2,7 +2,7 @@ import { sql } from './connect';
 
 export type User = {
   id: number;
-  name: string;
+  firstName: string;
   username: string;
   passwordHash: string;
 };
@@ -40,6 +40,25 @@ export async function getUserWithPasswordHashByUsername(username: string) {
   return user;
 }
 // the createUser function will with params of name, username and pw hash that is adding a user to the database with that information (objects) and then returning the user without the pw:
+
+// run a query that will identidy the user by the token:
+
+export async function getUserFirstNameBySessionToken(token: string) {
+  if (!token) return undefined;
+
+  const [user] = await sql<{ id: number; firstName: string }[]>`
+  SELECT
+    users.id,
+    users.first_name
+  FROM
+    users,
+     sessions
+  WHERE
+  sessions.token = ${token} AND
+  sessions.user_id = users.id AND
+  sessions.expiry_timestamp > now();
+  `;
+}
 
 export async function createUser(
   first_name: string,

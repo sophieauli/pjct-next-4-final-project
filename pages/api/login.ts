@@ -5,11 +5,13 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from 'next';
+import { userAgent } from 'next/server';
 import { createSession } from '../../database/sessions';
 import {
   getUserByUsername,
   getUserWithPasswordHashByUsername,
 } from '../../database/users';
+import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 // 1. check if the data is in the body of the request = check the request to protect the database!
 
@@ -37,7 +39,7 @@ export default async function LoginHandler(
         errors: [{ message: 'Username or password not provided correctly.' }],
       });
     }
-    // 2. we can assume that the user already exists so no we need to get the user from the database by his username without the password:
+    // 2. we can assume that the user already exists so now we need to get the user from the database by his username without the password:
 
     const user = await getUserWithPasswordHashByUsername(request.body.username);
     if (!user) {
@@ -58,8 +60,6 @@ export default async function LoginHandler(
       });
     }
 
-    console.log('password is valid=', isPasswordValid);
-
     // optional step 4: create a csrf secret:
 
     // 5. create a session token and serialize a cookie with that token:
@@ -72,8 +72,17 @@ export default async function LoginHandler(
       crypto.randomBytes(80).toString('base64'),
     );
 
-    console.log(session);
-  }
+    const serializedCookie = await createSerializedRegisterSessionTokenCookie(
+      session.token,
+    );
 
-  // 4. run the sql query to store user in database:
+    // 5.2. send the command to the server to create the cookie with the name (bc serializedCookie = await....) of session token:
+
+    response
+      .status(200)
+      .setHeader('Set-Cookie', serializedCookie)
+      .json({ user: { username: user.username } });
+  } else {
+    response.status(401).json({ errors: [{ message: 'Methos not allowed.' }] });
+  }
 }
