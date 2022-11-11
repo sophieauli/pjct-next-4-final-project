@@ -46,6 +46,8 @@ export default function UserProfile(props: Props) {
         />
       </Head>
       id: {props.user.id} username: {props.user.username}
+      <h2>Coming up</h2>
+      <h2>My Events</h2>
       <button
         onClick={async () => {
           await logoutHandler();

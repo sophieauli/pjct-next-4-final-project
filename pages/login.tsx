@@ -1,4 +1,4 @@
-// import { css } from '@emotion/react';
+import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -9,6 +9,19 @@ import { LoginResponseBody } from './api/login';
 type Props = {
   refreshUserProfile: () => Promise<void>;
 };
+
+const buttonStyle = css`
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 24px;
+  border-radius: 5px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 6px 20px;
+  border-radius: 5px;
+  width: auto;
+`;
 
 export default function Login(props: Props) {
   const [username, setUsername] = useState('');
@@ -90,6 +103,7 @@ export default function Login(props: Props) {
         onClick={async () => {
           await loginHandler();
         }}
+        css={buttonStyle}
       >
         login
       </button>
@@ -102,11 +116,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // first we are going to get the token:
   const token = context.req.cookies.sessionToken;
 
-  if (token && (await getValidSessionByToken(token)))
+  if (token && (await getValidSessionByToken(token))) {
     return {
       redirect: {
         destination: '/',
-        permanent: false,
+        permanent: true,
       },
     };
+  }
+
+  return {
+    props: {},
+  };
 }

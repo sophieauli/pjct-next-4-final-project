@@ -18,10 +18,22 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           body {
             background-color: black;
             font-family: 'Saira';
+            font-size: 22px;
+            color: #e9d8ac;
+            text-align: center;
+            width: 100vw;
+            display: 'flex';
+            justify-content: 'center';
+            align-items: 'center';
+            height: 200vh;
+          }
+          h1 {
+            font-family: 'Saira';
+            font-weight: 2000;
             color: #e9d8ac;
             align-items: center;
             width: 100vw;
-            padding: 20px;
+            /* padding: 20px; */
           }
         `}
       />

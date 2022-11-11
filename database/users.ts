@@ -43,13 +43,13 @@ export async function getUserWithPasswordHashByUsername(username: string) {
 
 // run a query that will identidy the user by the token:
 
-export async function getUserFirstNameBySessionToken(token: string) {
+export async function getUserBySessionToken(token: string) {
   if (!token) return undefined;
 
-  const [user] = await sql<{ id: number; firstName: string }[]>`
+  const [user] = await sql<{ id: number; username: string }[]>`
   SELECT
     users.id,
-    users.first_name
+    users.username
   FROM
     users,
      sessions
@@ -58,6 +58,8 @@ export async function getUserFirstNameBySessionToken(token: string) {
   sessions.user_id = users.id AND
   sessions.expiry_timestamp > now();
   `;
+
+  return user;
 }
 
 export async function createUser(
