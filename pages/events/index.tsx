@@ -3,14 +3,14 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Event, getEvents } from '../../database/events';
+import { Event, getEvents } from '../../database/events_table';
 
 // import { getProducts, Product } from '../../database/products';
 
 // style variable for hats incl rainbow hover for product name:
 
 type Props = {
-  events: Event[];
+  events: Event;
 };
 
 export default function Events(props: Props) {
@@ -19,8 +19,8 @@ export default function Events(props: Props) {
     return (
       <div>
         <Head>
-          <title>User not found</title>
-          <meta name="description" content="User not found" />
+          <title>Event not found</title>
+          <meta name="description" content="Event not found" />
           <h1>404 - this event could not be found</h1>
         </Head>
         <h1>Coming up</h1>
@@ -84,10 +84,10 @@ export default function Events(props: Props) {
 export async function getServerSideProps(): Promise<
   GetServerSidePropsResult<Props>
 > {
-  const products = await getEvents();
+  const event = await getEvents();
   return {
     props: {
-      products: products,
+      events: event,
     },
   };
   // will be passed to the page component as props

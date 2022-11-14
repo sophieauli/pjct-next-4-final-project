@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import { GetServerSidePropsContext } from 'next';
-import { deleteSessionByToken } from '../database/sessions';
+import { deleteSessionByToken } from '../database/sessions_table';
 
 export default function Logout() {
   return null;

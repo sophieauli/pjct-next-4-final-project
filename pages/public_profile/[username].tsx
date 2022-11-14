@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getUserByUsername, User } from '../../database/users';
+import { getUserByUsername, User } from '../../database/users_table';
 
 type Props = {
   user?: User;

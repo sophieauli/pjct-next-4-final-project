@@ -1,8 +1,8 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getValidSessionByToken } from '../database/sessions';
-import { getUserByUsername, User } from '../database/users';
+import { getValidSessionByToken } from '../database/sessions_table';
+import { getUserByUsername, User } from '../database/users_table';
 
 type Props = {
   user?: User;

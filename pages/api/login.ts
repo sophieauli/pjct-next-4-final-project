@@ -6,11 +6,11 @@ import {
   NextApiResponse,
 } from 'next';
 import { userAgent } from 'next/server';
-import { createSession } from '../../database/sessions';
+import { createSession } from '../../database/sessions_table';
 import {
   getUserByUsername,
   getUserWithPasswordHashByUsername,
-} from '../../database/users';
+} from '../../database/users_table';
 import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 // 1. check if the data is in the body of the request = check the request to protect the database!

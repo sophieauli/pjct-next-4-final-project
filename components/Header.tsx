@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { getUserByUsername, User } from '../database/users';
+import { getUserByUsername, User } from '../database/users_table';
 
 const headerStyle = css`
   display: flex;

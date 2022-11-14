@@ -5,12 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { getValidSessionByToken } from '../database/sessions';
-import { RegisterResponseBody } from './api/register';
+import { CreateEventResponseBody } from '../api/events';
 
-const lighterText = css`
-  color: #e9d8ac;
-`;
 const buttonStyle = css`
   background-color: #d9d9d974;
   color: #e9d8ac;
@@ -24,39 +20,47 @@ const buttonStyle = css`
   width: auto;
 `;
 
-export default function Register() {
-  const [firstName, setFirstName] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+// import { getValidSessionByToken } from '../../database/sessions';
+
+export default function CreateEvent() {
+  const [eventName, setEventName] = useState('');
+  const [location, setLocation] = useState('');
+  const [dateTime, setDateTime] = useState('');
+  const [description, setDescription] = useState('');
+
+  const [guestFirstName, setGuestFirstName] = useState('');
+  const [guestLastName, setGuestLastName] = useState('');
+  const [guestPhoneNumber, setguestPhoneNumber] = useState('');
+
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
 
-  async function registerHandler() {
-    const registerResponse = await fetch('/api/register', {
+  async function eventHandler() {
+    const createEventResponse = await fetch('/api/events', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        firstName: firstName.toLowerCase(),
-        username: username.toLowerCase(),
-        password,
+        eventName: eventName.toLowerCase(),
+        location: location.toLowerCase(),
+        dateTime,
+        description,
       }),
     });
 
     // packing the api response into a variable and giving it a type at the end (either as a type error or type user because those are the types we defined it with in api/register file):
 
-    const registerResponseBody =
-      (await registerResponse.json()) as RegisterResponseBody;
+    const createEventResponseBody =
+      (await createEventResponse.json()) as CreateEventResponseBody;
 
     // we still need to "set" the errors to whatever error messages are coming from the response body:
 
-    if ('errors' in registerResponseBody) {
-      setErrors(registerResponseBody.errors);
+    if ('errors' in createEventResponseBody) {
+      setErrors(createEventResponseBody.errors);
 
-      return console.log(registerResponseBody.errors);
+      return console.log(createEventResponseBody.errors);
     }
-    // check login.tsx for explanation of logic below:
 
     const returnTo = router.query.returnTo;
     if (
@@ -66,16 +70,17 @@ export default function Register() {
     ) {
       return await router.push(returnTo);
     }
-    await router.push(`/profile/${registerResponseBody.user.username}`);
+    await router.push(`/events/${createEventResponseBody.event.eventName}`);
   }
   return (
     <div>
       <Head>
-        <title>Sign Up</title>
-        <meta name="description" content="register" />
+        <title>Create Event</title>
+        <meta name="description" content="create event" />
       </Head>
 
       <main>
+        <h1>Make it happen!</h1>
         <Image
           src="/Join Diego.svg"
           alt="Join Diego beige"
@@ -83,44 +88,54 @@ export default function Register() {
           height="123"
         />
         <label>
-          first name
+          New Event
           <input
-            value={firstName}
+            value={eventName}
             onChange={(event) => {
-              setFirstName(event.currentTarget.value);
+              setEventName(event.currentTarget.value);
             }}
           />
         </label>
         <br />
         <label>
-          username
+          When?
           <input
-            value={username}
+            value={dateTime}
             onChange={(event) => {
-              setUsername(event.currentTarget.value);
+              setDateTime(event.currentTarget.value);
             }}
           />
         </label>
         <br />
         <label>
-          password
+          Where?
           <input
-            value={password}
+            value={location}
             onChange={(event) => {
-              setPassword(event.currentTarget.value);
+              setLocation(event.currentTarget.value);
             }}
           />
         </label>
+        <br />
+        {/* <label>
+          Add Guests
+          <input
+            value={location}
+            onChange={(event) => {
+              setLocation(event.currentTarget.value);
+            }}
+          />
+        </label> */}
         <br />
         <button
           onClick={async () => {
-            await registerHandler();
+            await eventHandler();
           }}
           css={buttonStyle}
         >
           sign up
         </button>
-        <div css={lighterText}>
+        <div>
           Already have an account? <Link href="/login"> Login </Link>
         </div>
       </main>

@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { getValidSessionByToken } from '../database/sessions';
+import { getValidSessionByToken } from '../database/sessions_table';
 import { LoginResponseBody } from './api/login';
 
 type Props = {

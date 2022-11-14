@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { getValidSessionByToken } from '../database/sessions';
+import { getValidSessionByToken } from '../database/sessions_table';
 import { RegisterResponseBody } from './api/register';
 
 const lighterText = css`

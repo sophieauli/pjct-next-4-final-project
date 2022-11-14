@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getValidSessionByToken } from '../../database/sessions';
-import { getUserBySessionToken } from '../../database/users';
+import { getValidSessionByToken } from '../../database/sessions_table';
+import { getUserBySessionToken } from '../../database/users_table';
 
 export async function handler(
   request: NextApiRequest,

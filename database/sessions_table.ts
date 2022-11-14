@@ -1,5 +1,5 @@
 import { sql } from './connect';
-import { User } from './users';
+import { User } from './users_table';
 
 export type Session = {
   // id: number; commented out because we do not want to expose the session id, the user id is enough:
