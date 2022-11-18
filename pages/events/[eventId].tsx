@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Event, getEventByEventId } from '../../database/events_table';
+import { Event, getEventByEventId } from '../../database/events';
 
 type Props =
   | {

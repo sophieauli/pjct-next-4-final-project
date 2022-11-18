@@ -5,7 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { CreateEventResponseBody } from '../api/events';
+import AddSingleGuest from '../components/addSingleGuest';
+import { getValidSessionByToken } from '../database/sessions';
+import { getUserBySessionToken } from '../database/users';
+import { CreateEventResponseBody } from './api/events';
 
 const buttonStyle = css`
   background-color: #d9d9d974;
@@ -16,8 +19,40 @@ const buttonStyle = css`
   border: solid;
   border-color: #e9d8ac;
   padding: 6px 20px;
-  border-radius: 5px;
   width: auto;
+  cursor: pointer;
+`;
+
+const roundButtonStyle = css`
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 24px;
+  border-radius: 100px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 5px 6px;
+  width: 40px;
+  text-align: center;
+  cursor: pointer;
+  margin: 20px;
+`;
+
+const styleInputField = css`
+  color: #e9d8ac;
+  background-color: #e9d8ac3e;
+  font-size: 24px;
+  border-radius: 5px;
+  border-width: 1px;
+  font-size: 24px;
+  margin: 5px;
+  padding: 10px;
+  border: solid;
+  border-color: #e9d8ac;
+  display: table-cell;
+  placeholder {
+    color: #e9d8ac;
+  }
 `;
 
 // import { getValidSessionByToken } from '../../database/sessions';
@@ -27,10 +62,12 @@ export default function CreateEvent() {
   const [location, setLocation] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [description, setDescription] = useState('');
+  const [clickAddGuest, setClickAddGuest] = useState(false);
+  const [clickNext, setClickNext] = useState(false);
 
-  const [guestFirstName, setGuestFirstName] = useState('');
-  const [guestLastName, setGuestLastName] = useState('');
-  const [guestPhoneNumber, setguestPhoneNumber] = useState('');
+  // const [guestFirstName, setGuestFirstName] = useState('');
+  // const [guestLastName, setGuestLastName] = useState('');
+  // const [guestPhoneNumber, setguestPhoneNumber] = useState('');
 
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
@@ -72,60 +109,73 @@ export default function CreateEvent() {
     }
     await router.push(`/events/${createEventResponseBody.event.eventName}`);
   }
+
+  // if (clickAddGuest) {
+  //   return <AddSingleGuest />;
+  // }
   return (
     <div>
       <Head>
         <title>Create Event</title>
         <meta name="description" content="create event" />
+        <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
 
       <main>
         <h1>Make it happen!</h1>
-        <Image
-          src="/Join Diego.svg"
-          alt="Join Diego beige"
-          width="402"
-          height="123"
-        />
-        <label>
-          New Event
+        <div>
+          <label>New Event</label>
+          <br />
           <input
+            css={styleInputField}
+            placeholder="Birthday Dinner"
+            required
             value={eventName}
             onChange={(event) => {
               setEventName(event.currentTarget.value);
             }}
           />
-        </label>
-        <br />
-        <label>
-          When?
+
+          <br />
+          <label>When?</label>
+          <br />
           <input
+            css={styleInputField}
+            placeholder="01.01.2022"
+            required
+            type="datetime-local"
             value={dateTime}
             onChange={(event) => {
               setDateTime(event.currentTarget.value);
             }}
           />
-        </label>
-        <br />
-        <label>
-          Where?
+
+          <br />
+          <label>Where?</label>
+          <br />
           <input
+            css={styleInputField}
+            placeholder="Linienstraße 110"
+            required
             value={location}
             onChange={(event) => {
               setLocation(event.currentTarget.value);
             }}
           />
-        </label>
+        </div>
         <br />
-        {/* <label>
-          Add Guests
-          <input
-            value={location}
-            onChange={(event) => {
-              setLocation(event.currentTarget.value);
-            }}
-          />
-        </label> */}
+        <label>Add Guests</label>
+        <button
+          css={roundButtonStyle}
+          onClick={() => {
+            setClickAddGuest(true);
+          }}
+        >
+          +
+        </button>
+        {clickAddGuest ? <AddSingleGuest /> : ''}
+        {/* <AddSingleGuest /> */}
+        <br />
         <br />
         <button
           onClick={async () => {
@@ -133,11 +183,8 @@ export default function CreateEvent() {
           }}
           css={buttonStyle}
         >
-          sign up
+          next
         </button>
-        <div>
-          Already have an account? <Link href="/login"> Login </Link>
-        </div>
       </main>
     </div>
   );
@@ -146,7 +193,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // first we are going to the token:
   const token = context.req.cookies.sessionToken;
 
-  if (token && (await getValidSessionByToken(token))) {
+  if (!token || !(await getValidSessionByToken(token))) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    };
+  }
+  const user = await getUserBySessionToken(token);
+
+  if (!user) {
     return {
       redirect: {
         destination: '/',

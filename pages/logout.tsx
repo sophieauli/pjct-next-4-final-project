@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 import { GetServerSidePropsContext } from 'next';
-import { deleteSessionByToken } from '../database/sessions_table';
+import { deleteSessionByToken } from '../database/sessions';
 
 export default function Logout() {
   return null;
@@ -10,6 +10,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // first we have to store the session token in a variable:
 
   const token = context.req.cookies.sessionToken;
+  console.log(token);
 
   // then we take that variable and delete it frmo the database:
 

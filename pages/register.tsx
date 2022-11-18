@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { getValidSessionByToken } from '../database/sessions_table';
+import { getValidSessionByToken } from '../database/sessions';
 import { RegisterResponseBody } from './api/register';
 
 const lighterText = css`
@@ -22,6 +22,25 @@ const buttonStyle = css`
   padding: 6px 20px;
   border-radius: 5px;
   width: auto;
+  cursor: pointer;
+`;
+
+const displaySectionStyle = css`
+  text-align: center;
+`;
+
+const inputFieldStyle = css`
+  color: #e9d8ac;
+  background-color: #e9d8ac3e;
+  font-size: 22px;
+  border-radius: 5px;
+  border-width: 1px;
+  font-size: 24px;
+  margin: 5px;
+  padding: 10px;
+  border: solid;
+  border-color: #e9d8ac;
+  display: table-cell;
 `;
 
 export default function Register() {
@@ -66,64 +85,71 @@ export default function Register() {
     ) {
       return await router.push(returnTo);
     }
-    await router.push(`/profile/${registerResponseBody.user.username}`);
+    // await router.push(`/profile/${registerResponseBody.user.username}`);
+    await router.push(`/private-profile`);
   }
   return (
     <div>
       <Head>
         <title>Sign Up</title>
         <meta name="description" content="register" />
+        <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
-
-      <main>
-        <Image
-          src="/Join Diego.svg"
-          alt="Join Diego beige"
-          width="402"
-          height="123"
-        />
-        <label>
-          first name
-          <input
-            value={firstName}
-            onChange={(event) => {
-              setFirstName(event.currentTarget.value);
-            }}
+      <div css={displaySectionStyle}>
+        <main>
+          <Image
+            src="/Join Diego.svg"
+            alt="Join Diego beige"
+            width="402"
+            height="123"
           />
-        </label>
-        <br />
-        <label>
-          username
-          <input
-            value={username}
-            onChange={(event) => {
-              setUsername(event.currentTarget.value);
+          <br />
+          <label>
+            first name
+            <input
+              css={inputFieldStyle}
+              value={firstName}
+              onChange={(event) => {
+                setFirstName(event.currentTarget.value);
+              }}
+            />
+          </label>
+          <br />
+          <label>
+            username
+            <input
+              css={inputFieldStyle}
+              value={username}
+              onChange={(event) => {
+                setUsername(event.currentTarget.value);
+              }}
+            />
+          </label>
+          <br />
+          <label>
+            password
+            <input
+              css={inputFieldStyle}
+              value={password}
+              onChange={(event) => {
+                setPassword(event.currentTarget.value);
+              }}
+            />
+          </label>
+          <br />
+          <button
+            onClick={async () => {
+              await registerHandler();
             }}
-          />
-        </label>
-        <br />
-        <label>
-          password
-          <input
-            value={password}
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-            }}
-          />
-        </label>
-        <br />
-        <button
-          onClick={async () => {
-            await registerHandler();
-          }}
-          css={buttonStyle}
-        >
-          sign up
-        </button>
-        <div css={lighterText}>
-          Already have an account? <Link href="/login"> Login </Link>
-        </div>
-      </main>
+            css={buttonStyle}
+          >
+            sign up
+          </button>
+          <div css={lighterText}>
+            Already have an account? <Link href="/login"> Login </Link>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

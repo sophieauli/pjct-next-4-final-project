@@ -18,9 +18,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           body {
             background-color: black;
             font-family: 'Saira';
-            font-size: 22px;
+            font-size: 24px;
             color: #e9d8ac;
-            text-align: center;
             width: 100vw;
             display: 'flex';
             justify-content: 'center';
@@ -31,9 +30,22 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             font-family: 'Saira';
             font-weight: 2000;
             color: #e9d8ac;
+            text-align: center;
             align-items: center;
             width: 100vw;
             /* padding: 20px; */
+          }
+          h2 {
+            font-family: 'Saira';
+            font-size: 22;
+            color: #e9d8ac;
+            text-align: left;
+            align-items: center;
+            width: 100vw;
+            padding: 20px 0px 0px 2px;
+          }
+          hr {
+            border-top: 1px solid #e9d8ac;
           }
         `}
       />

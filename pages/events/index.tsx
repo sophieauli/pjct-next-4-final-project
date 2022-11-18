@@ -1,16 +1,20 @@
 import { css } from '@emotion/react';
-import { GetServerSideProps, GetServerSidePropsResult } from 'next';
+import { GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Event, getEvents } from '../../database/events_table';
+import { userAgent } from 'next/server';
+import { idText } from 'typescript';
+import { Event, getAllEvents, getHostEvents } from '../../database/events';
+import { CookieTokenAttendingGuests } from '../../database/events_guests';
 
 // import { getProducts, Product } from '../../database/products';
 
 // style variable for hats incl rainbow hover for product name:
 
 type Props = {
-  events: Event;
+  events: Event[];
+  cookieTokenAttending: CookieTokenAttendingGuests[];
 };
 
 export default function Events(props: Props) {
@@ -35,48 +39,29 @@ export default function Events(props: Props) {
         <title>Events</title>
         <meta name="event overview" content="List page of all events" />
       </Head>
-
       <h1>Coming up</h1>
-      <h2>You're invited to...</h2>
-      <div>
-        {props.events.map((event) => {
-          return (
-            <div key={`event number ${event.id}`}>
-              <div>
-                <a data-test-id={`event-${event.id}`}>
-                  <Link href={`events/${event.id}`}></Link>
-                </a>
-              </div>
-              <div>
-                <h3>
-                  <Link href={`events/${event.id}`}>{event.eventName}</Link>
-                </h3>
-                <div>EUR {event.location}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <h2>You're hosting...</h2>
-      <div>
-        {props.events.map((event) => {
-          return (
-            <div key={`event number ${event.id}`}>
-              <div>
-                <a data-test-id={`event-${event.id}`}>
-                  <Link href={`events/${event.id}`}></Link>
-                </a>
-              </div>
-              <div>
-                <h3>
-                  <Link href={`events/${event.id}`}>{event.eventName}</Link>
-                </h3>
-                <div>EUR {event.location}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <h2>Your invites</h2>
+      {props.events.map((event) => {
+        return (
+          <div key={`event number ${event.id}`}>
+            <Link href={`events/${event.id}`}>{event.eventName}</Link>
+            {event.dateTime}
+            {event.location}
+          </div>
+        );
+      })}
+      {/* <h2>You're hosting</h2>
+       {props.cookieTokenAttending.map((event) => {
+        return (
+          <div>
+
+              <Link href={`events/${cookieTokenAttending.id}`}>{event.eventName}</Link>
+              {cookieTokenAttending.dateTime}
+              {cookieTokenAttending.location}
+          </div>
+        )}
+
+    );} */}
     </>
   );
 }
@@ -84,12 +69,22 @@ export default function Events(props: Props) {
 export async function getServerSideProps(): Promise<
   GetServerSidePropsResult<Props>
 > {
-  const event = await getEvents();
+  // first we are going to get the cookietoken:
+  // const token = context.req.cookies.sessionToken;
+
+  const event = await getAllEvents();
   return {
     props: {
-      events: event,
+      events: events,
     },
   };
+
   // will be passed to the page component as props
   // as frontend: going from back- to frontend.
 }
+
+
+-> like on private profile page:
+- check cookies / session token of specific user and ; -> get events by user idText- get hosteventsbyId
+
+wie im ecommer -> get all events by user id

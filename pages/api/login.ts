@@ -6,11 +6,12 @@ import {
   NextApiResponse,
 } from 'next';
 import { userAgent } from 'next/server';
-import { createSession } from '../../database/sessions_table';
+import { createSession } from '../../database/sessions';
 import {
   getUserByUsername,
   getUserWithPasswordHashByUsername,
-} from '../../database/users_table';
+  User,
+} from '../../database/users';
 import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 // 1. check if the data is in the body of the request = check the request to protect the database!
@@ -42,6 +43,9 @@ export default async function LoginHandler(
     // 2. we can assume that the user already exists so now we need to get the user from the database by his username without the password:
 
     const user = await getUserWithPasswordHashByUsername(request.body.username);
+
+    console.log(user);
+
     if (!user) {
       return response.status(401).json({
         errors: [{ message: 'User not found.' }],
@@ -83,6 +87,6 @@ export default async function LoginHandler(
       .setHeader('Set-Cookie', serializedCookie)
       .json({ user: { username: user.username } });
   } else {
-    response.status(401).json({ errors: [{ message: 'Methos not allowed.' }] });
+    response.status(401).json({ errors: [{ message: 'Method not allowed.' }] });
   }
 }

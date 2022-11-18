@@ -2,8 +2,8 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createSession } from '../../database/sessions_table';
-import { createUser, getUserByUsername } from '../../database/users_table';
+import { createSession } from '../../database/sessions';
+import { createUser, getUserByUsername } from '../../database/users';
 import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 // import { createCsrfSecret } from '../../utils/csrf';

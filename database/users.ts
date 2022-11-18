@@ -1,3 +1,4 @@
+import Events from '../pages/events';
 import { sql } from './connect';
 
 export type User = {
@@ -29,8 +30,7 @@ export async function getUserWithPasswordHashByUsername(username: string) {
 
   const [user] = await sql<User[]>`
   SELECT
-    username,
-    password_hash
+    *
   FROM
     users
   WHERE
@@ -49,14 +49,15 @@ export async function getUserBySessionToken(token: string) {
   const [user] = await sql<{ id: number; username: string }[]>`
   SELECT
     users.id,
-    users.username
+    users.username,
+    users.first_name
   FROM
     users,
-     sessions
+    sessions
   WHERE
-  sessions.token = ${token} AND
-  sessions.user_id = users.id AND
-  sessions.expiry_timestamp > now();
+    sessions.token = ${token} AND
+    sessions.user_id = users.id AND
+    sessions.expiry_timestamp > now()
   `;
 
   return user;

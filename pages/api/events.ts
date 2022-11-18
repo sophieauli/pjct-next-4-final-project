@@ -2,9 +2,14 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createEventCookieToken } from '../../database/events_guests_table';
-import { createEvent, getEventByEventId } from '../../database/events_table';
+import { createEvent, getEventByEventId } from '../../database/events';
+import { createEventCookieToken } from '../../database/events_guests';
+import { Guest } from '../../database/guests';
 import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
+
+type Props = {
+  guest: Guest;
+};
 
 // import { createCsrfSecret } from '../../utils/csrf';
 
@@ -16,6 +21,7 @@ export type CreateEventResponseBody =
 // above we are defining that there is an object type with a property called errors and user that could contain an array of one or more objects with a message.
 
 export default async function CreateEventHandler(
+  // const eventName = request.body.eventName
   request: NextApiRequest,
   response: NextApiResponse<CreateEventResponseBody>,
 ) {
@@ -39,10 +45,10 @@ export default async function CreateEventHandler(
     }
     // 2. check whether user has already been registered:
 
-    const user = await getEventByEventId(request.body.username);
-    if (user) {
+    const event = await getEventByEventId(request.body.event_id);
+    if (event) {
       return response.status(401).json({
-        errors: [{ message: 'A user with this username already exists.' }],
+        errors: [{ message: 'This event already exists.' }],
       });
     }
     // 3. if all good hash the given password:
@@ -52,7 +58,6 @@ export default async function CreateEventHandler(
     // 4. run the sql query to create the record in the database:
 
     const eventWithAllInfo = await createEvent(
-      request.body.id,
       request.body.event_name,
       request.body.location,
       request.body.date_time,
@@ -70,6 +75,8 @@ export default async function CreateEventHandler(
       eventWithAllInfo.id,
       crypto.randomBytes(80).toString('base64'),
     );
+
+    // 7. create a id:
 
     const serializedGuestCookie = createSerializedRegisterSessionTokenCookie(
       guestSession.cookie_token_attending_guests,

@@ -1,6 +1,6 @@
 import { sql } from './connect';
-import { Guest } from './guests_table';
-import { Session } from './sessions_table';
+import { Guest } from './guests';
+import { Session } from './sessions';
 
 export type CookieTokenAttendingGuests = {
   guest_id: number;
@@ -27,6 +27,26 @@ export async function createEventCookieToken(
   return eventCookieToken;
 }
 
+export async function getEventByCookieToken(
+  cookie_token_attending_guests: string,
+) {
+  if (!cookie_token_attending_guests) return undefined;
+  const [guest] = await sql<CookieTokenAttendingGuests[]>`
+  SELECT
+    *
+  FROM
+    events,
+    events_guests
+  WHERE
+    events_guests.cookie_token_attending_guests = ${cookie_token_attending_guests}
+  AND
+    events_guests.event_id = events.id
+  AND
+  sessions.expiry_timestamp > now() `;
+
+  return guest;
+}
+
 // export async function deleteExpiredToken() {
 //   const [eventCookieToken] = await sql<CookieTokenAttendingGuests[]>`
 //   DELETE FROM
@@ -39,20 +59,4 @@ export async function createEventCookieToken(
 //   return eventCookieToken;
 // }
 
-//-> regarding expiry timestamp: ask Jose...
-
-export async function getEventByCookieToken(token: Session['token']) {
-  if (!token) return undefined;
-
-  const [session] = await sql<Session[]>`
-  SELECT
-    sessions.id,
-    sessions.token
-  FROM sessions
-  WHERE
-    sessions.token = ${token}
-  AND
-    sessions.expiry_timestamp > now()`;
-
-  return session;
-}
+//-> regarding expiry timestamp: ask Jose.

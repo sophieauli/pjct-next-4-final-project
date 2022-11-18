@@ -14,7 +14,7 @@ export function createSerializedRegisterSessionTokenCookie(token: string) {
   //returning directly from the library command:
 
   // giving the cookie its name 'sessionToken' and then its value token:
-  return cookie.serialize(`session token`, token, {
+  return cookie.serialize(`sessionToken`, token, {
     maxAge: maxAge,
     // for internet explorer :
     expires: new Date(Date.now() + maxAge * 1000),

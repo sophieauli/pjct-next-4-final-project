@@ -1,13 +1,17 @@
 import { css } from '@emotion/react';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { getUserByUsername, User } from '../database/users_table';
+import {
+  getUserBySessionToken,
+  getUserByUsername,
+  User,
+} from '../database/users';
 
 const headerStyle = css`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  background-color: #f5f5f5;
   padding: 10px;
   border-radius: 10px;
   color: #939090;
@@ -22,21 +26,28 @@ export default function Header(props: Props) {
       <meta name="description" content="XYZ" />
       <nav css={headerStyle}>
         <div>
-          <Link href="/"> {props.firstName} </Link>
-        </div>
-        <div>
-          <Link href="/products" data-test-id="products-link">
-            our hats
-          </Link>
-        </div>
-        <div data-test-id="cart-count">
-          <Link href="/cart" data-test-id="cart-link">
-            <a>cart ({props.cart ? cartAmountCount : 0})</a>
-          </Link>
+          <Link href="/profile"> testuser </Link>
         </div>
       </nav>
     </header>
   );
 }
 
-export default function GetServerSideProps
+// export async function getServerSideProps(context: GetServerSidePropsContext) {
+//   const token = context.req.cookies.sessionToken;
+
+//   const user = token && (await getUserBySessionToken(token));
+
+//   if (!user) {
+//     return {
+//       redirect: {
+//         destination: '/login?returnTo=/private-profile',
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: { user },
+//   };
+// }

@@ -1,11 +1,47 @@
+import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { getValidSessionByToken } from '../database/sessions_table';
-import { getUserByUsername, User } from '../database/users_table';
+import { Event, getHostEvents } from '../database/events';
+import { getValidSessionByToken } from '../database/sessions';
+import {
+  getUserBySessionToken,
+  getUserByUsername,
+  User,
+} from '../database/users';
+
+const buttonStyle = css`
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 22px;
+  border-radius: 5px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 6px 20px;
+  border-radius: 5px;
+  width: auto;
+  cursor: pointer;
+`;
+
+const roundButtonStyle = css`
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 24px;
+  border-radius: 100px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 5px 6px;
+  width: 40px;
+  text-align: center;
+  cursor: pointer;
+`;
 
 type Props = {
   user?: User;
+  events?: Event;
 };
 
 export default function UserProfile(props: Props) {
@@ -19,7 +55,7 @@ export default function UserProfile(props: Props) {
     ) {
       return await router.push(returnTo);
     }
-    await router.push(`/login`);
+    await router.push(`/logout`);
   }
 
   if (!props.user) {
@@ -44,16 +80,28 @@ export default function UserProfile(props: Props) {
           name="description"
           content="User Information and Profile Settings"
         />
+        <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
-      id: {props.user.id} username: {props.user.username}
-      <h2>Coming up</h2>
+      hi {props.user.firstName}!<h2>Coming up</h2>
       <h2>My Events</h2>
+      {}
       <button
+        css={roundButtonStyle}
+        onClick={async () => {
+          await router.push(`/newevent`);
+        }}
+      >
+        +
+      </button>
+      <br />
+      <br />
+      <button
+        css={buttonStyle}
         onClick={async () => {
           await logoutHandler();
         }}
       >
-        logout
+        logout{' '}
       </button>
     </div>
   );
@@ -61,9 +109,8 @@ export default function UserProfile(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // build redirect:
-
   const token = context.req.cookies.sessionToken;
-
+  console.log(token);
   if (!token || !(await getValidSessionByToken(token))) {
     return {
       redirect: {
@@ -72,9 +119,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   }
-  // retrieve username and show in url:
-  const username = context.query.username as string;
-  const user = await getUserByUsername(username.toLowerCase());
+
+  const user = await getUserBySessionToken(token);
+
+  console.log(user);
 
   if (!user) {
     context.res.statusCode = 404;
@@ -83,8 +131,25 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: {},
     };
   }
-  // otherwise, so when the user is found, return and pass the user props:
+
+  // retrieve hostEvents and show on page:
+
+  // const eventname = context.query.eventName as string;
+
+  // const hostEvents = await getHostEvents(eventname);
+  // if (!hostEvents) {
+  //   {
+  //     context.res.statusCode = 404;
+  //     return {
+  //       // returning empty object as props if we cannot find the user:
+  //       props: {},
+  //     };
+  //   }
+  // }
+
   return {
-    props: { user },
+    props: {
+      user,
+    },
   };
 }

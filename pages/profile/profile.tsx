@@ -3,7 +3,7 @@ import Head from 'next/head';
 // import { getUserByUsername, User } from '../../database/users';
 
 // type Props = {
-//   user?: User;
+//   user: User;
 // };
 
 // export default function UserProfile(props: Props) {
