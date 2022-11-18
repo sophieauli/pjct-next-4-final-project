@@ -84,7 +84,8 @@ export default function Login(props: Props) {
     // refresh the user on state
     // await props.refreshUserProfile();
     // redirect user to user profile
-    await router.push(`/private-profile`);
+    await router.push(`/myevents
+    `);
     // await router.push(`/profile/${loginResponseBody.user.username}`);
   }
 

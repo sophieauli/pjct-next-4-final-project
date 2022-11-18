@@ -21,7 +21,7 @@
     "**/*.ts",
     "**/*.tsx",
     "components/Footer.js",
-    "components/Layout.js",
+    "components/Layout.tsx",
     "pages/login.tsx"
   ],
   "exclude": ["node_modules"]

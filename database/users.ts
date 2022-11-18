@@ -1,4 +1,4 @@
-import Events from '../pages/events';
+import Events from '../pages/myevents';
 import { sql } from './connect';
 
 export type User = {

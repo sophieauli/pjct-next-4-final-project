@@ -122,6 +122,14 @@ export default function CreateEvent() {
       </Head>
 
       <main>
+        <button
+          css={buttonStyle}
+          onClick={async () => {
+            await router.push(`/myevents`);
+          }}
+        >
+          back
+        </button>
         <h1>Make it happen!</h1>
         <div>
           <label>New Event</label>

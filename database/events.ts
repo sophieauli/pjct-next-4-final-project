@@ -30,34 +30,44 @@ export async function createEvent(
   return newEvent!;
 }
 
-export async function getAllEvents(id: string) {
-  if (!id) return undefined;
-
-  const [eventId] = await sql<Event[]>`
+export async function getAllEvents() {
+  const [events] = await sql<Event[]>`
   SELECT
     *
   FROM
     events
     `;
 
-  return eventId;
+  return events;
 }
 
-export async function getEventByEventId(id: string) {
-  if (!id) return undefined;
-
+export async function getEventByEventId(id: number) {
   const [eventId] = await sql<Event[]>`
   SELECT
-    id,
-    eventName
+    *
   FROM
     events
   WHERE
-    events.eventId = ${id}
+    id = ${id}
     `;
 
   return eventId;
 }
+// export async function getEventByEventId(id: number) {
+//   if (!id) return undefined;
+
+//   const [eventId] = await sql<Event[]>`
+//   SELECT
+//     id,
+//     eventName
+//   FROM
+//     events
+//   WHERE
+//     events.eventId = ${id}
+//     `;
+
+//   return eventId;
+// }
 
 export async function getHostEvents(host_user_id: string) {
   if (!host_user_id) return undefined;

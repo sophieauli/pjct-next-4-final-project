@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import '@fontsource/saira';
 import { css, Global } from '@emotion/react';
 import { AppProps } from 'next/app';
-import Layout from '../components/Layout.js';
+import Layout from '../components/Layout';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   // the component's props are Component and pageProps for which you then define the type AppProps!
@@ -30,8 +30,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             font-family: 'Saira';
             font-weight: 2000;
             color: #e9d8ac;
-            text-align: center;
-            align-items: center;
+            text-align: left;
+            align-items: left;
             width: 100vw;
             /* padding: 20px; */
           }
@@ -43,6 +43,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             align-items: center;
             width: 100vw;
             padding: 20px 0px 0px 2px;
+            a:link {
+              text-decoration: underline;
+            }
           }
           hr {
             border-top: 1px solid #e9d8ac;
