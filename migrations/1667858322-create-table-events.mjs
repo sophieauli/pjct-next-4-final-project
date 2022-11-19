@@ -5,7 +5,7 @@ export async function up(sql) {
       event_name varchar(110) NOT NULL,
       location varchar(110) NOT NULL,
       date_time varchar NOT NULL,
-      description text NOT NULL,
+      description varchar(150) NOT NULL,
 			host_user_id integer REFERENCES users (id) ON DELETE CASCADE
     )
   `;

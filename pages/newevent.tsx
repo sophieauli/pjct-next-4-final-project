@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddSingleGuest from '../components/addSingleGuest';
+import { Event } from '../database/events';
 import { getValidSessionByToken } from '../database/sessions';
 import { getUserBySessionToken } from '../database/users';
 import { CreateEventResponseBody } from './api/events';
@@ -51,6 +52,24 @@ const styleInputField = css`
   border-color: #e9d8ac;
   display: table-cell;
   placeholder {
+    color: #e9d8ac;
+  }
+`;
+const descriptionInputField = css`
+  color: #e9d8ac;
+  background-color: #e9d8ac3e;
+  font-size: 24px;
+  border-radius: 5px;
+  border-width: 1px;
+  font-size: 24px;
+  margin: 5px;
+  padding: 10px;
+  border: solid;
+  border-color: #e9d8ac;
+  display: table-cell;
+  height: 200px;
+  text-align: left;
+  .placeholder {
     color: #e9d8ac;
   }
 `;
@@ -107,7 +126,7 @@ export default function CreateEvent() {
     ) {
       return await router.push(returnTo);
     }
-    await router.push(`/events/${createEventResponseBody.event.eventName}`);
+    await router.push(`/myevents`);
   }
 
   // if (clickAddGuest) {
@@ -149,7 +168,6 @@ export default function CreateEvent() {
           <br />
           <input
             css={styleInputField}
-            placeholder="01.01.2022"
             required
             type="datetime-local"
             value={dateTime}
@@ -170,6 +188,20 @@ export default function CreateEvent() {
               setLocation(event.currentTarget.value);
             }}
           />
+          <br />
+          <label>Description</label>
+          <br />
+
+          <textarea
+            css={descriptionInputField}
+            placeholder="Some extra info..."
+            maxLength={150}
+            required
+            value={description}
+            onChange={(event) => {
+              setDescription(event.currentTarget.value);
+            }}
+          />
         </div>
         <br />
         <label>Add Guests</label>
@@ -182,7 +214,7 @@ export default function CreateEvent() {
           +
         </button>
         {clickAddGuest ? <AddSingleGuest /> : ''}
-        {/* <AddSingleGuest /> */}
+
         <br />
         <br />
         <button

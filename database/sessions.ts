@@ -3,7 +3,7 @@ import { User } from './users';
 
 export type Session = {
   // id: number; commented out because we do not want to expose the session id, the user id is enough:
-  user_id: string;
+  user_id: number;
   token: string;
   // expiryTimestamp: Date;
 };

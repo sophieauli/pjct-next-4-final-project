@@ -1,8 +1,10 @@
 import { css } from '@emotion/react';
 
 const footerStyles = css`
-  position: absolute;
-  bottom: 0;
+  margin-top: 20px;
+  padding: 15px 20px;
+  padding-top: 10px;
+  border-top: 1px solid #999999;
 `;
 
 export default function Footer() {

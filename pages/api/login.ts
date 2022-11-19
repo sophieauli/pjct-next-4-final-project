@@ -44,7 +44,7 @@ export default async function LoginHandler(
 
     const user = await getUserWithPasswordHashByUsername(request.body.username);
 
-    console.log(user);
+    // console.log(user);
 
     if (!user) {
       return response.status(401).json({

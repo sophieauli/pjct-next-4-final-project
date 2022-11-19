@@ -36,6 +36,7 @@ type Props = {
 
 export default function Events(props: Props) {
   const router = useRouter();
+  console.log('porps events', props.events);
   // if (!props.user) {
   //   // if profile can't be found, return the following page / passing a user not found component:
   //   return (
@@ -60,7 +61,6 @@ export default function Events(props: Props) {
           <meta name="description" content="Event not found" />
           <h1>404 - this event could not be found</h1>
         </Head>
-        <h1>Coming up</h1>
         <h2>Looks like you have nothing planned yet...</h2>
       </div>
     );
@@ -78,17 +78,19 @@ export default function Events(props: Props) {
         <Header username={props.user?.firstName} />
         <h1>Coming up</h1>
         <h2>My Events</h2>
+
         {props.events.map((event) => {
           return (
-            <div key={`event number ${event.id}`}>
+            <div key={`event-${event.id}`}>
               <Link href={`myevents/${event.id}`}>{event.eventName}</Link>
               <br />
-              {event.dateTime}
-              <br />
-              {event.location}
+              <div>{event.dateTime}</div>
+
+              <div>{event.location}</div>
             </div>
           );
         })}
+
         <h2>My Invites</h2>
         {/* <h2>You're hosting</h2>
        {props.cookieTokenAttending.map((event) => {
@@ -147,7 +149,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // console.log(JSON.parse(events), 'events');
   return {
     props: {
-      events: [JSON.parse(events)],
+      events: JSON.parse(events),
       user,
     },
   };

@@ -1,9 +1,23 @@
+import { css } from '@emotion/react';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Event, getEventByEventId } from '../../database/events';
 import { parseIntFromContextQuery } from '../../utils/contextquery';
+
+const buttonStyle = css`
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 24px;
+  border-radius: 5px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 6px 20px;
+  width: auto;
+  cursor: pointer;
+`;
 
 type Props =
   | {
@@ -14,6 +28,7 @@ type Props =
     };
 
 export default function Events(props: Props) {
+  const router = useRouter();
   if ('error' in props) {
     return (
       <div>
@@ -38,7 +53,14 @@ export default function Events(props: Props) {
         />
         <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
-
+      <button
+        css={buttonStyle}
+        onClick={async () => {
+          await router.push(`/myevents`);
+        }}
+      >
+        back
+      </button>
       <div>{props.events.eventName}</div>
       <div>{props.events.dateTime}</div>
       <div>{props.events.location}</div>

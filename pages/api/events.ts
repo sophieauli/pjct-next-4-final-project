@@ -5,10 +5,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { createEvent, getEventByEventId } from '../../database/events';
 import { createEventCookieToken } from '../../database/events_guests';
 import { Guest } from '../../database/guests';
+import { User } from '../../database/users';
 import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 type Props = {
   guest: Guest;
+  user: User;
 };
 
 // import { createCsrfSecret } from '../../utils/csrf';
@@ -32,7 +34,7 @@ export default async function CreateEventHandler(
       // checking whether it is provided as a string:
       typeof request.body.eventName !== 'string' ||
       typeof request.body.location !== 'string' ||
-      typeof request.body.dateTime !== 'number' ||
+      typeof request.body.dateTime !== 'string' ||
       typeof request.body.description !== 'string' ||
       !request.body.eventName ||
       !request.body.location ||
@@ -51,19 +53,18 @@ export default async function CreateEventHandler(
         errors: [{ message: 'This event already exists.' }],
       });
     }
-    // 3. if all good hash the given password:
-    const passwordHash = await bcrypt.hash(request.body.password, 12);
-    console.log(passwordHash);
-
-    // 4. run the sql query to create the record in the database:
+    // 3. run the sql query to create the record in the database:
 
     const eventWithAllInfo = await createEvent(
-      request.body.event_name,
+      request.body.userId,
+      request.body.eventName,
       request.body.location,
-      request.body.date_time,
+      request.body.dateTime,
       request.body.description,
-      request.body.host_user_id,
     );
+
+    // insertIntoEventGuestTable
+    // twilio REST API
 
     // 5. optional: create a csrf token, which is a secret, user-specific token to prevent Cross-Site Request Forgeries:
     //   const secret = await await createCsrfSecret();
@@ -71,20 +72,20 @@ export default async function CreateEventHandler(
 
     // 6.Create a token and serialize a cookie with the token:
 
-    const guestSession = await createEventCookieToken(
-      eventWithAllInfo.id,
-      crypto.randomBytes(80).toString('base64'),
-    );
+    // const guestSession = await createEventCookieToken(
+    //   eventWithAllInfo.id,
+    //   crypto.randomBytes(80).toString('base64'),
+    // );
 
-    // 7. create a id:
+    // 7. create an id:
 
-    const serializedGuestCookie = createSerializedRegisterSessionTokenCookie(
-      guestSession.cookie_token_attending_guests,
-    );
+    // const serializedGuestCookie = createSerializedRegisterSessionTokenCookie(
+    //   guestSession.cookie_token_attending_guests,
+    // );
 
     response
       .status(200)
-      .setHeader('Set-Cookie', serializedGuestCookie)
+      //     .setHeader('Set-Cookie', serializedGuestCookie)
       .json({ event: { eventName: eventWithAllInfo.eventName } });
   } else {
     response.status(401).json({ errors: [{ message: 'Method not allowed' }] });

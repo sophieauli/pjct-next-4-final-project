@@ -1,6 +1,5 @@
 import { sql } from './connect';
-
-// import { User } from './users';
+import { User } from './users';
 
 export type Event = {
   id: number;
@@ -12,17 +11,17 @@ export type Event = {
 };
 
 export async function createEvent(
+  userId: User['id'],
   eventName: string,
   location: string,
-  dateTime: number,
+  dateTime: string,
   description: string,
-  hostUserId: number,
 ) {
-  const [newEvent] = await sql<{ id: number; eventName: string }[]>`
+  const [newEvent] = await sql<Event[]>`
   INSERT INTO events
     (event_name, location, date_time, description, host_user_id)
   VALUES
-    (${eventName}, ${location}, ${dateTime}, ${description}, ${hostUserId})
+    (${eventName}, ${location}, ${dateTime}, ${description}, ${userId})
   RETURNING
     *
   `;
@@ -31,7 +30,7 @@ export async function createEvent(
 }
 
 export async function getAllEvents() {
-  const [events] = await sql<Event[]>`
+  const events = await sql`
   SELECT
     *
   FROM
