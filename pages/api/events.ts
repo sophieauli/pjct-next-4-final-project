@@ -2,15 +2,16 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createEvent, getEventByEventId } from '../../database/events';
+import { createEvent, Event, getEventByEventId } from '../../database/events';
 import { createEventCookieToken } from '../../database/events_guests';
 import { Guest } from '../../database/guests';
-import { User } from '../../database/users';
+import { getUserBySessionToken, User } from '../../database/users';
 import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
 
 type Props = {
   guest: Guest;
   user: User;
+  event: Event;
 };
 
 // import { createCsrfSecret } from '../../utils/csrf';
@@ -29,7 +30,12 @@ export default async function CreateEventHandler(
 ) {
   if (request.method === 'POST') {
     // 1. check whether data is stored:
-
+    const token = request.cookies.sessionToken;
+    const user = token && (await getUserBySessionToken(token));
+    if (user) {
+      const id = user.id;
+      const userId = id;
+    }
     if (
       // checking whether it is provided as a string:
       typeof request.body.eventName !== 'string' ||
@@ -42,12 +48,18 @@ export default async function CreateEventHandler(
       !request.body.description
     ) {
       return response.status(400).json({
-        errors: [{ message: 'event information not provided correctly.' }],
+        errors: [
+          {
+            message:
+              'event information not provided correctly - please fill out every input field.',
+          },
+        ],
       });
     }
-    // 2. check whether user has already been registered:
+    // 2. check whether event has already been created - not necessary - maybe by date?:
 
     const event = await getEventByEventId(request.body.event_id);
+    const userId = user.id;
     if (event) {
       return response.status(401).json({
         errors: [{ message: 'This event already exists.' }],
@@ -56,13 +68,17 @@ export default async function CreateEventHandler(
     // 3. run the sql query to create the record in the database:
 
     const eventWithAllInfo = await createEvent(
-      request.body.userId,
       request.body.eventName,
       request.body.location,
       request.body.dateTime,
       request.body.description,
+      user.id,
     );
-
+    // user.id,
+    console.log(eventWithAllInfo);
+    console.log(request.body.id);
+    console.log(user.id);
+    console.log(user);
     // insertIntoEventGuestTable
     // twilio REST API
 

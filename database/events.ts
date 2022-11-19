@@ -8,20 +8,21 @@ export type Event = {
   dateTime: string;
   description: string;
   hostUserId: number;
+  // hostUserId is the same as user_id in the Session type
 };
 
 export async function createEvent(
-  userId: User['id'],
   eventName: string,
   location: string,
   dateTime: string,
   description: string,
-) {
+  id: number,
+): Promise<any> {
   const [newEvent] = await sql<Event[]>`
   INSERT INTO events
     (event_name, location, date_time, description, host_user_id)
   VALUES
-    (${eventName}, ${location}, ${dateTime}, ${description}, ${userId})
+    (${eventName}, ${location}, ${dateTime}, ${description}, ${id})
   RETURNING
     *
   `;
