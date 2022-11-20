@@ -37,12 +37,14 @@ const inputFieldStyle = css`
   display: table-cell;
 `;
 
+
+
 type AddedGuest = Guest[];
 
 export default function AddSingleGuest() {
   const [guestFirstName, setGuestFirstName] = useState('');
   const [guestLastName, setGuestLastName] = useState('');
-  const [guestPhoneNumber, setGuestPhoneNumber] = useState('');
+  const [GuestPhoneNumber, setGuestPhoneNumber] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const [addedGuest, setAddedGuest] = useState<Guest[]>([]);
   const router = useRouter();
@@ -56,7 +58,7 @@ export default function AddSingleGuest() {
       body: JSON.stringify({
         guestFirstName: guestFirstName.toLowerCase(),
         guestLastName: guestLastName.toLowerCase(),
-        guestPhoneNumber: guestPhoneNumber,
+        guestPhoneNumber: GuestPhoneNumber,
       }),
     });
     console.log(addGuestResponse);
@@ -113,7 +115,7 @@ export default function AddSingleGuest() {
           placeholder="+43 123 1234567"
           type="tel"
           css={inputFieldStyle}
-          value={guestPhoneNumber}
+          value={GuestPhoneNumber}
           onChange={(event) => {
             setGuestPhoneNumber(event.currentTarget.value);
           }}

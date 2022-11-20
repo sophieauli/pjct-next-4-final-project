@@ -86,7 +86,7 @@ export default function Register() {
       return await router.push(returnTo);
     }
     // await router.push(`/profile/${registerResponseBody.user.username}`);
-    await router.push(`/private-profile`);
+    await router.push(`/myevents`);
   }
   return (
     <div>

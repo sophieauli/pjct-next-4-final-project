@@ -6,10 +6,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddSingleGuest from '../components/addSingleGuest';
-import { Event } from '../database/events';
+import { Event, getEventByEventId } from '../database/events';
+import { getGuestIdByGuestId } from '../database/guests';
 import { getValidSessionByToken } from '../database/sessions';
 import { getUserBySessionToken } from '../database/users';
 import { CreateEventResponseBody } from './api/events';
+import GuestHandler from './api/guests';
+import createGuestByEventIdHandler from './api/guests_events';
 
 const buttonStyle = css`
   background-color: #d9d9d974;
@@ -91,6 +94,10 @@ export default function CreateEvent() {
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
 
+  // async function GuestHandler() {
+  //   const createGuestResponse;
+  // }
+
   async function eventHandler() {
     const createEventResponse = await fetch('/api/events', {
       method: 'POST',
@@ -129,6 +136,17 @@ export default function CreateEvent() {
     await router.push(`/myevents`);
   }
 
+  // async function createGuestByEventIdHandler() {
+  //   const eventId = await getEventByEventId(guestId);
+  //   const guestId = await getGuestIdByGuestId(guestId);
+  //   const createGuestByEventIdResponse = await fetch('api/guests_events', {
+  //     method: 'POST',
+  //     headers: { 'content-type': 'application/json' },
+  //     body: JSON.stringify({ guestId: guestId, eventId: eventId }),
+  //   });
+  // }
+  // const createGuestByEventIdResponseBody =
+  //   (await createGuestByEventIdResponse.json()) as CreateGuestByEventIdResponseBody;
   // if (clickAddGuest) {
   //   return <AddSingleGuest />;
   // }
@@ -220,10 +238,12 @@ export default function CreateEvent() {
         <button
           onClick={async () => {
             await eventHandler();
+            // await createGuestByEventIdHandler();
+            // await GuestHandler();
           }}
           css={buttonStyle}
         >
-          next
+          send invites
         </button>
       </main>
     </div>
@@ -251,6 +271,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   }
+
+  // const guestId = await getGuestIdByGuestId();
 
   return {
     props: {},

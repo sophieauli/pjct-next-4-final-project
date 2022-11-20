@@ -56,11 +56,7 @@ export default async function GuestHandler(
       request.body.guestPhoneNumber,
     );
 
-    const guestInDatabase = await createGuest(
-      request.body.guestFirstName,
-      request.body.guestLastName,
-      request.body.guestPhoneNumber,
-    );
+    const guestInDatabase = await createGuest(setAddedGuest);
 
     console.log(guestInDatabase);
 

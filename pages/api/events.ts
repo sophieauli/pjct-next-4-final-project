@@ -10,7 +10,7 @@ import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies'
 
 type Props = {
   guest: Guest;
-  user: User;
+  user?: User;
   event: Event;
 };
 
@@ -59,7 +59,7 @@ export default async function CreateEventHandler(
     // 2. check whether event has already been created - not necessary - maybe by date?:
 
     const event = await getEventByEventId(request.body.event_id);
-    const userId = user.id;
+    const userId = user?.id;
     if (event) {
       return response.status(401).json({
         errors: [{ message: 'This event already exists.' }],
@@ -72,13 +72,14 @@ export default async function CreateEventHandler(
       request.body.location,
       request.body.dateTime,
       request.body.description,
-      user.id,
+      userId,
     );
-    // user.id,
-    console.log(eventWithAllInfo);
-    console.log(request.body.id);
-    console.log(user.id);
-    console.log(user);
+
+    // console.log(eventWithAllInfo);
+    // console.log(request.body.id);
+    // console.log(user.id);
+    // console.log(userId);
+    // console.log(user);
     // insertIntoEventGuestTable
     // twilio REST API
 

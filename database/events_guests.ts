@@ -1,11 +1,29 @@
 import { sql } from './connect';
+import { Event } from './events';
 import { Guest } from './guests';
 import { Session } from './sessions';
+
+export type EventWithGuests = {
+  id: number | null;
+  event_id: number;
+  guest_id: number;
+  cookie_token_attending_guests: number;
+  is_attending: boolean;
+};
 
 export type CookieTokenAttendingGuests = {
   guest_id: number;
   cookie_token_attending_guests: string;
 };
+// will add the guestcookietoken and boolean value later:
+
+export async function createGuestByEventId(eventId: number, guestId: number) {
+  const [guest] = await sql`
+INSERT INTO events_guests
+(event_id, guest_id)
+VALUES
+(${eventId}, ${guestId})`;
+}
 
 export async function createEventCookieToken(
   guestId: Guest['id'],
