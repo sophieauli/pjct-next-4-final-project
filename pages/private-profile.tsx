@@ -65,6 +65,7 @@ export default function UserProfile(props: Props) {
         <Head>
           <title>User not found</title>
           <meta name="description" content="User not found" />
+          <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
           <h1>404 - this user could not be found</h1>
         </Head>
       </div>

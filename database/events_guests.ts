@@ -7,6 +7,22 @@ export type CookieTokenAttendingGuests = {
   cookie_token_attending_guests: string;
 };
 
+export async function createGuestByEventId(
+  eventId: number,
+  guestId: number,
+  guestToken: string,
+) {
+  const [guest] = await sql`
+INSERT INTO events_guests
+(event_id, guest_id, cookie_token_attending_guests)
+VALUES
+(${eventId}, ${guestId}, )
+RETURNING
+event_id,
+guest_id
+`;
+}
+
 export async function createEventCookieToken(
   guestId: Guest['id'],
   cookie_token_attending_guests: string,

@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import '@fontsource/saira';
 import { css, Global } from '@emotion/react';
 import { AppProps } from 'next/app';
-import Layout from '../components/Layout.js';
+import Layout from '../components/Layout';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   // the component's props are Component and pageProps for which you then define the type AppProps!

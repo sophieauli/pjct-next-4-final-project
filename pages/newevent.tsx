@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddSingleGuest from '../components/addSingleGuest';
+import { Guest } from '../database/guests';
 import { getValidSessionByToken } from '../database/sessions';
 import { getUserBySessionToken } from '../database/users';
 import { CreateEventResponseBody } from './api/events';
@@ -54,7 +55,24 @@ const styleInputField = css`
     color: #e9d8ac;
   }
 `;
-
+const descriptionInputField = css`
+  color: #e9d8ac;
+  background-color: #e9d8ac3e;
+  font-size: 24px;
+  border-radius: 5px;
+  border-width: 1px;
+  font-size: 24px;
+  margin: 5px;
+  padding: 10px;
+  border: solid;
+  border-color: #e9d8ac;
+  display: table-cell;
+  height: 200px;
+  text-align: left;
+  .placeholder {
+    color: #e9d8ac;
+  }
+`;
 // import { getValidSessionByToken } from '../../database/sessions';
 
 export default function CreateEvent() {
@@ -64,6 +82,8 @@ export default function CreateEvent() {
   const [description, setDescription] = useState('');
   const [clickAddGuest, setClickAddGuest] = useState(false);
   const [clickNext, setClickNext] = useState(false);
+  const [addedGuest, setAddedGuest] = useState<Guest[]>([]);
+  console.log(addedGuest);
 
   // const [guestFirstName, setGuestFirstName] = useState('');
   // const [guestLastName, setGuestLastName] = useState('');
@@ -83,6 +103,7 @@ export default function CreateEvent() {
         location: location.toLowerCase(),
         dateTime,
         description,
+        addedGuest,
       }),
     });
 
@@ -107,86 +128,113 @@ export default function CreateEvent() {
     ) {
       return await router.push(returnTo);
     }
-    await router.push(`/events/${createEventResponseBody.event.eventName}`);
+    await router.push(`/myevents`);
   }
 
   // if (clickAddGuest) {
   //   return <AddSingleGuest />;
   // }
   return (
-    <div>
+    <>
       <Head>
         <title>Create Event</title>
         <meta name="description" content="create event" />
         <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
 
-      <main>
-        <h1>Make it happen!</h1>
-        <div>
-          <label>New Event</label>
-          <br />
-          <input
-            css={styleInputField}
-            placeholder="Birthday Dinner"
-            required
-            value={eventName}
-            onChange={(event) => {
-              setEventName(event.currentTarget.value);
-            }}
-          />
+      <button
+        css={buttonStyle}
+        onClick={async () => {
+          await router.push(`/myevents`);
+        }}
+      >
+        back
+      </button>
 
-          <br />
-          <label>When?</label>
-          <br />
-          <input
-            css={styleInputField}
-            placeholder="01.01.2022"
-            required
-            type="datetime-local"
-            value={dateTime}
-            onChange={(event) => {
-              setDateTime(event.currentTarget.value);
-            }}
-          />
+      <h1>Make it happen!</h1>
+      <div>
+        <label>New Event</label>
+        <br />
+        <input
+          css={styleInputField}
+          placeholder="Birthday Dinner"
+          required
+          value={eventName}
+          onChange={(event) => {
+            setEventName(event.currentTarget.value);
+          }}
+        />
 
-          <br />
-          <label>Where?</label>
-          <br />
-          <input
-            css={styleInputField}
-            placeholder="Linienstraße 110"
-            required
-            value={location}
-            onChange={(event) => {
-              setLocation(event.currentTarget.value);
-            }}
-          />
-        </div>
         <br />
-        <label>Add Guests</label>
-        <button
-          css={roundButtonStyle}
-          onClick={() => {
-            setClickAddGuest(true);
+        <label>When?</label>
+        <br />
+        <input
+          css={styleInputField}
+          placeholder="01.01.2022"
+          required
+          type="datetime-local"
+          value={dateTime}
+          onChange={(event) => {
+            setDateTime(event.currentTarget.value);
           }}
-        >
-          +
-        </button>
-        {clickAddGuest ? <AddSingleGuest /> : ''}
-        {/* <AddSingleGuest /> */}
+        />
+
         <br />
+        <label>Where?</label>
         <br />
-        <button
-          onClick={async () => {
-            await eventHandler();
+        <input
+          css={styleInputField}
+          placeholder="Linienstraße 110"
+          required
+          value={location}
+          onChange={(event) => {
+            setLocation(event.currentTarget.value);
           }}
-          css={buttonStyle}
-        >
-          next
-        </button>
-      </main>
-    </div>
+        />
+        <br />
+        <label>Description</label>
+        <br />
+
+        <textarea
+          css={descriptionInputField}
+          placeholder="Some extra info..."
+          maxLength={150}
+          required
+          value={description}
+          onChange={(event) => {
+            setDescription(event.currentTarget.value);
+          }}
+        />
+      </div>
+      <br />
+      <label>Add Guests</label>
+      <button
+        css={roundButtonStyle}
+        onClick={() => {
+          setClickAddGuest(true);
+        }}
+      >
+        +
+      </button>
+      {clickAddGuest ? (
+        <AddSingleGuest addedGuest={addedGuest} setAddedGuest={setAddedGuest} />
+      ) : (
+        ''
+      )}
+
+      <h2>Guestlist</h2>
+      {JSON.stringify(addedGuest)}
+      <br />
+      <br />
+      <button
+        onClick={async () => {
+          await eventHandler();
+        }}
+        css={buttonStyle}
+      >
+        send invites
+      </button>
+    </>
   );
 }
 export async function getServerSideProps(context: GetServerSidePropsContext) {
