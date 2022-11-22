@@ -23,7 +23,7 @@ export default function Header(props: any) {
       <meta name="description" content="XYZ" />
       <nav css={headerStyle}>
         <div>
-          <Link href="/profile"> {props.username} </Link>
+          <Link href="/private-profile"> {props.username} </Link>
           <Image
             src="/usericon.svg"
             alt="Join Diego beige"

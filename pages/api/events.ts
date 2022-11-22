@@ -3,13 +3,13 @@ import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createEvent, getEventByEventId } from '../../database/events';
-import {
-  createEventCookieToken,
-  createGuestByEventId,
-} from '../../database/events_guests';
+import { createGuestWithGuestTokenByEventId } from '../../database/events_guests';
 import { Guest } from '../../database/guests';
 import { getUserBySessionToken, User } from '../../database/users';
-import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
+import {
+  createSerializedCookieTokenAttendingGuests,
+  createSerializedRegisterSessionTokenCookie,
+} from '../../utils/cookies';
 
 type Props = {
   guest: Guest;
@@ -88,21 +88,34 @@ export default async function CreateEventHandler(
 
     const guests = request.body.addedGuest;
 
-    const eventiIfo = [];
+    const eventInfo = [];
+
+    // here we create a token for every guest by running a loop and running the crypto function for every loop:
 
     for (const guest of guests) {
-      const guestToken = 'alsdkfj';
+      const guestToken = crypto
+        .randomBytes(45)
+        .toString('base64')
+        .replace(/\//g, '_')
+        .replace(/\+/g, '-') as string;
 
-      const fullEventiIfo = await createGuestByEventId(
+      // here we run the db query entering the event.id and guest.id as well as the token we created above:
+
+      const fullEventInfo = await createGuestWithGuestTokenByEventId(
         newEvent.id,
         guest.id,
         guestToken,
       );
       // (this is where the sendinvite API will go)
-      eventiIfo.push(fullEventiIfo);
+      eventInfo.push(fullEventInfo);
     }
 
     console.log(guests);
+
+    // 6. Since we already have the guestToken, all that's left is to serialize a cookie with the token. :
+
+    // const serializedGuestCookie =
+    //   await createSerializedCookieTokenAttendingGuests(guestToken.guestToken);
 
     response
       .status(200)
@@ -112,9 +125,7 @@ export default async function CreateEventHandler(
     response.status(401).json({ errors: [{ message: 'Method not allowed' }] });
   }
 }
-// // 6.Create a token and serialize a cookie with the token:
 
-// const guestSession = await createEventCookieToken(
 //   eventWithAllInfo.id,
 //   crypto.randomBytes(80).toString('base64'),
 // );

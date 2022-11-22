@@ -1,6 +1,16 @@
 import { sql } from './connect';
+import { User } from './users';
 
 // import { User } from './users';
+
+export type HostEvent = {
+  id: number;
+  eventName: string;
+  location: string;
+  dateTime: string;
+  description: string;
+  hostUserId: number;
+};
 
 export type Event = {
   id: number;
@@ -31,7 +41,7 @@ export async function createEvent(
 }
 
 export async function getAllEvents() {
-  const events = await sql`
+  const events = await sql<Event[]>`
   SELECT
     *
   FROM
@@ -41,7 +51,7 @@ export async function getAllEvents() {
 }
 
 export async function getEventByEventId(id: number) {
-  const [eventId] = await sql<Event[]>`
+  const eventId = await sql<Event[]>`
   SELECT
     *
   FROM
@@ -53,10 +63,10 @@ export async function getEventByEventId(id: number) {
   return eventId;
 }
 
-export async function getHostEvents(host_user_id: string) {
-  if (!host_user_id) return undefined;
+export async function getHostEvents(host_user_id: number) {
+  // if (!host_user_id) return undefined;
 
-  const [hostEvent] = await sql<Event[]>`
+  const hostEvent = await sql<HostEvent[]>`
   SELECT
     events.id,
     events.event_name,

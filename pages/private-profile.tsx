@@ -83,17 +83,7 @@ export default function UserProfile(props: Props) {
         />
         <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
-      hi {props.user.firstName}!<h2>Coming up</h2>
-      <h2>My Events</h2>
-      {}
-      <button
-        css={roundButtonStyle}
-        onClick={async () => {
-          await router.push(`/newevent`);
-        }}
-      >
-        +
-      </button>
+      hi {props.user.firstName}!{}
       <br />
       <br />
       <button

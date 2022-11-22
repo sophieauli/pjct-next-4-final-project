@@ -4,11 +4,13 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { userAgent } from 'next/server';
-import { idText } from 'typescript';
 import Header from '../../components/Header';
-import { Event, getAllEvents, getHostEvents } from '../../database/events';
-import { CookieTokenAttendingGuests } from '../../database/events_guests';
+import {
+  Event,
+  getAllEvents,
+  getHostEvents,
+  HostEvent,
+} from '../../database/events';
 import { getValidSessionByToken } from '../../database/sessions';
 import { getUserBySessionToken, User } from '../../database/users';
 
@@ -28,16 +30,38 @@ const roundButtonStyle = css`
   text-align: center;
   cursor: pointer;
 `;
-type Props = {
-  user?: User;
-  events: Event[];
-  cookieTokenAttending: CookieTokenAttendingGuests[];
-};
+type Props =
+  // | {
+  //     user?: User;
+  //     events: Event[];
+  //     hostEvents: HostEvent[];
+  //     // cookieTokenAttending: CookieTokenAttendingGuests[];
+  //   }
+  | {
+      events: Event[];
+      user?: User;
+      hostEvents: HostEvent[];
+    }
+  | { error: string };
 
 export default function Events(props: Props) {
   const router = useRouter();
+  if ('error' in props) {
+    return (
+      <div>
+        <Head>
+          <title>Event not found</title>
+          <meta name="single event page" content="Event not found" />
+        </Head>
+        <h1>{props.error}</h1>
+        Click <Link href="/myevents"> here </Link> to be directed back to all
+        events!
+      </div>
+    );
+  }
+
   if (!props.events) {
-    // if profile can't be found, return the following page / passing a user not found component:
+    // if profile can't be found, return the following page / passing an event not found component:
     return (
       <div>
         <Head>
@@ -65,6 +89,18 @@ export default function Events(props: Props) {
         <Header username={props.user?.firstName} />
         <h1>Coming up</h1>
         <h2>My events</h2>
+        {props.hostEvents.map((hostEvent) => {
+          return (
+            <div key={`hostEvent-${hostEvent.id}`}>
+              <Link href={`myevents/${hostEvent.id}`}>
+                {hostEvent.eventName}
+              </Link>
+              {hostEvent.dateTime}
+              {hostEvent.location}
+            </div>
+          );
+        })}
+        <hr />
         {props.events.map((event) => {
           return (
             <div key={`event-${event.id}`}>
@@ -101,7 +137,9 @@ export default function Events(props: Props) {
   }
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<Props>> {
   // get the token :
   const token = context.req.cookies.sessionToken;
   // if no token: return to first page
@@ -120,15 +158,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     context.res.statusCode = 404;
     return {
       // returning empty object as props if we cannot find the user:
-      props: {},
+      props: { error: 'Only hosts allowed!' },
     };
   }
-  // get all events:
-  // const events = JSON.stringify(await getAllEvents());
+  // get all events of that user:
+
+  const host_user_id = user.id;
+  const hostEvents = await getHostEvents(host_user_id);
+
   const events = await getAllEvents();
   // console.log(JSON.parse(events), 'events');
   return {
     props: {
+      hostEvents: hostEvents,
       events: events,
       user,
     },
