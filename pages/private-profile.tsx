@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Event, getHostEvents } from '../database/events';
+import { Event, getEventsByHostId } from '../database/events';
 import { getValidSessionByToken } from '../database/sessions';
 import {
   getUserBySessionToken,

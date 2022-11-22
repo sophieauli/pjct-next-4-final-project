@@ -87,6 +87,7 @@ export default function GuestToken(props: Props) {
         >
           Sadly, no...
         </button>
+        <button>RSVP</button>
       </div>
     </>
   );

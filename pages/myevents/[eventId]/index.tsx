@@ -7,7 +7,8 @@ import Header from '../../../components/Header';
 import {
   Event,
   getEventByEventId,
-  getHostEvents,
+  getEventsByHostId,
+  getSingleHostEventById,
   HostEvent,
 } from '../../../database/events';
 import { getValidSessionByToken } from '../../../database/sessions';
@@ -28,7 +29,7 @@ const buttonStyle = css`
 `;
 
 type Props =
-  | { user?: User; events: Event[]; hostEvents: HostEvent[] }
+  | { user?: User; hostEvent: HostEvent[] }
   | {
       error: string;
     };
@@ -49,7 +50,7 @@ export default function Events(props: Props) {
       </div>
     );
   }
-  if (!props.events) {
+  if (!props.hostEvent) {
     // if profile can't be found, return the following page / passing an event not found component:
     return (
       <div>
@@ -87,12 +88,13 @@ export default function Events(props: Props) {
         >
           back
         </button>
-        {props.events.map((event) => {
+        {props.hostEvent.map((hostEvent) => {
           return (
-            <div key={`hostevent-${event.id}`}>
-              <Link href={`myevents/${event.id}`}>{event.eventName}</Link>
-              {event.dateTime}
-              {event.location}
+            <div key={`hostEvent-${hostEvent.id}`}>
+              {hostEvent.eventName}
+
+              {hostEvent.dateTime}
+              {hostEvent.location}
             </div>
           );
         })}
@@ -119,6 +121,7 @@ export async function getServerSideProps(
   }
   // get user that is logged in after having gotten "his" token:
   const user = await getUserBySessionToken(token);
+  console.log(user);
   // if no user is logged in:
   if (!user) {
     context.res.statusCode = 404;
@@ -128,7 +131,9 @@ export async function getServerSideProps(
     };
   }
 
-  // retrieve eventId and show in url:
+  const userId = user.id;
+
+  // retrieve eventId from url:
 
   const eventId = parseIntFromContextQuery(context.query.eventId);
 
@@ -140,10 +145,11 @@ export async function getServerSideProps(
       },
     };
   }
-  const host_user_id = user.id;
-  const hostEvent = await getHostEvents(host_user_id);
 
   const foundEvent = await getEventByEventId(eventId);
+  console.log(foundEvent);
+
+  // const foundEvent = await getEventByEventId(eventId);
 
   if (typeof foundEvent === 'undefined') {
     context.res.statusCode = 404;
@@ -155,8 +161,8 @@ export async function getServerSideProps(
   }
   return {
     props: {
-      hostEvents: hostEvent,
-      events: foundEvent,
+      user: user,
+      hostEvent: foundEvent,
     },
   };
 }

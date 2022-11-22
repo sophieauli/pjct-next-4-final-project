@@ -63,23 +63,24 @@ export async function getEventByEventId(id: number) {
   return eventId;
 }
 
-export async function getHostEvents(host_user_id: number) {
-  // if (!host_user_id) return undefined;
+export async function getEventsByHostId(userId: number) {
+  // if (!hostEvents) return undefined;
 
-  const hostEvent = await sql<HostEvent[]>`
+  const hostEvents = await sql<HostEvent[]>`
   SELECT
-    events.id,
-    events.event_name,
-    events.location,
-    events.date_time,
-    events.description,
-    events.host_user_id
+    *
   FROM
-    events,
-    users
+    events
+    -- users
   WHERE
-    events.host_user_id = users.id
+    events.host_user_id = ${userId}
     `;
 
-  return hostEvent;
+  return hostEvents;
+}
+
+export async function getSingleHostEventById(eventId: number, userId: number) {
+  const hostEventId = await sql<HostEvent[]>`
+  SELECT * FROM events WHERE id = ${eventId} AND host_user_id = ${userId}`;
+  return hostEventId;
 }

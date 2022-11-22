@@ -66,17 +66,8 @@ export default async function CreateEventHandler(
         errors: [{ message: 'event information not provided correctly.' }],
       });
     }
-    // 2. check whether user has already been registered:
 
-    const event = await getEventByEventId(request.body.event_id);
-    // const userId = user?.id;
-    if (event) {
-      return response.status(401).json({
-        errors: [{ message: 'This event already exists.' }],
-      });
-    }
-
-    // 3. run the sql query to create the record in the database:
+    // run the sql query to create the record in the database:
 
     const newEvent = await createEvent(
       request.body.eventName,

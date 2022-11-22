@@ -8,7 +8,7 @@ import Header from '../../components/Header';
 import {
   Event,
   getAllEvents,
-  getHostEvents,
+  getEventsByHostId,
   HostEvent,
 } from '../../database/events';
 import { getValidSessionByToken } from '../../database/sessions';
@@ -95,13 +95,17 @@ export default function Events(props: Props) {
               <Link href={`myevents/${hostEvent.id}`}>
                 {hostEvent.eventName}
               </Link>
-              {hostEvent.dateTime}
-              {hostEvent.location}
+              <br />
+              EVENT ID {hostEvent.id}
+              <br />
+              Date, time: {hostEvent.dateTime}
+              <br />
+              Location: {hostEvent.location}
             </div>
           );
         })}
         <hr />
-        {props.events.map((event) => {
+        {/* {props.events.map((event) => {
           return (
             <div key={`event-${event.id}`}>
               <Link href={`myevents/${event.id}`}>{event.eventName}</Link>
@@ -109,7 +113,7 @@ export default function Events(props: Props) {
               {event.location}
             </div>
           );
-        })}
+        })} */}
 
         <h2>My invites</h2>
         {/*
@@ -163,8 +167,8 @@ export async function getServerSideProps(
   }
   // get all events of that user:
 
-  const host_user_id = user.id;
-  const hostEvents = await getHostEvents(host_user_id);
+  const hostEvents = await getEventsByHostId(user.id);
+  console.log(hostEvents);
 
   const events = await getAllEvents();
   // console.log(JSON.parse(events), 'events');
