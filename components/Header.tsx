@@ -17,13 +17,15 @@ const headerStyle = css`
 `;
 
 export default function Header(props: any) {
+  const firstName =
+    props.firstName.charAt(0).toUpperCase() + props.firstName.slice(1);
   return (
     <header>
       <title>Header</title>
       <meta name="description" content="XYZ" />
       <nav css={headerStyle}>
         <div>
-          <Link href="/private-profile"> {props.username} </Link>
+          <Link href="/private-profile"> {firstName} </Link>
           <Image
             src="/usericon.svg"
             alt="Join Diego beige"

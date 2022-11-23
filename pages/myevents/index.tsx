@@ -14,9 +14,20 @@ import {
 import { getValidSessionByToken } from '../../database/sessions';
 import { getUserBySessionToken, User } from '../../database/users';
 
-// import { getProducts, Product } from '../../database/products';
+const eventBox = css`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 400px;
+  border: solid;
+  border-color: #e9d8ac;
+  border-radius: 40px;
+`;
 
-// style variable for hats incl rainbow hover for product name:
+const eventName = css`
+  font-size: 32px;
+`;
+
 const roundButtonStyle = css`
   background-color: #d9d9d974;
   color: #e9d8ac;
@@ -71,7 +82,7 @@ export default function Events(props: Props) {
           <h1>404 - this event could not be found</h1>
         </Head>
 
-        <Header username={props.user?.firstName} />
+        <Header firstName={props.user?.firstName} />
         <h1>Coming up</h1>
         <h2>Looks like you have nothing planned yet...</h2>
       </div>
@@ -86,21 +97,19 @@ export default function Events(props: Props) {
           <meta name="event overview" content="List page of all events" />
           <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
         </Head>
-        <Header username={props.user?.firstName} />
+        <Header firstName={props.user?.firstName} />
         <h1>Coming up</h1>
         <h2>My events</h2>
         {props.hostEvents.map((hostEvent) => {
           return (
-            <div key={`hostEvent-${hostEvent.id}`}>
+            <div key={`hostEvent-${hostEvent.id}`} css={eventBox}>
               <Link href={`myevents/${hostEvent.id}`}>
                 {hostEvent.eventName}
               </Link>
               <br />
-              EVENT ID {hostEvent.id}
+              When: {hostEvent.dateTime}
               <br />
-              Date, time: {hostEvent.dateTime}
-              <br />
-              Location: {hostEvent.location}
+              Where: {hostEvent.location}
             </div>
           );
         })}
@@ -114,7 +123,6 @@ export default function Events(props: Props) {
             </div>
           );
         })} */}
-
         <h2>My invites</h2>
         {/*
        {props.cookieTokenAttending.map((event) => {
@@ -135,7 +143,8 @@ export default function Events(props: Props) {
           }}
         >
           +
-        </button>
+        </button>{' '}
+        create an event!
       </>
     );
   }

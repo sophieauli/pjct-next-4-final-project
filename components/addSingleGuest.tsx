@@ -39,7 +39,7 @@ const inputFieldStyle = css`
 `;
 type Props = {
   setAddedGuest: Dispatch<SetStateAction<Guest[]>>;
-  addedGuest: any[]
+  addedGuest: any[];
 };
 // type AddedGuest = Guest[];
 
@@ -88,25 +88,25 @@ export default function AddSingleGuest(props: Props) {
       </Head>
       <h1>Add Guest</h1>
       <label>
-        first name
+        First Name
         <input
           placeholder="Diego"
           css={inputFieldStyle}
           value={guestFirstName}
           onChange={(event) => {
-            setGuestFirstName(event.currentTarget.value.toLowerCase());
+            setGuestFirstName(event.currentTarget.value);
           }}
         />
       </label>
       <br />
       <label>
-        last name
+        Last Name
         <input
           css={inputFieldStyle}
           placeholder="Smith"
           value={guestLastName}
           onChange={(event) => {
-            setGuestLastName(event.currentTarget.value.toLowerCase());
+            setGuestLastName(event.currentTarget.value);
           }}
         />
       </label>

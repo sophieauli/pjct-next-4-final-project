@@ -40,7 +40,7 @@ export async function updateAttendanceGuest(
 ) {
   const statusAttendance = await sql`
   UPDATE events_guests
-  SET (is_attending) = ${isAttending}
+  SET is_attending = ${isAttending}
   WHERE cookie_token_attending_guests = ${guestToken}
 
   RETURNING is_attending

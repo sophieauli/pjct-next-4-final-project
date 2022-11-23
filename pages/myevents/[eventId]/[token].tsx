@@ -4,6 +4,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import RSVPNo from '../../../components/rsvp_no';
+import RSVPYes from '../../../components/rsvp_yes';
 import {
   getGuestByEventIdAndGuestToken,
   GuestEventInfo,
@@ -13,6 +15,27 @@ import { parseIntFromContextQuery } from '../../../utils/contextQuery';
 import { getParsedCookie, setStringifiedCookie } from '../../../utils/cookies';
 
 // import { GetServerSidePropsContext } from 'next';
+
+const attendanceButton = css`
+  background-color: black;
+  :active {
+    background-color: #d9d9d974;
+  }
+  :disabled {
+    background-color: #646161f4;
+    opacity: 50%;
+    border: 1px solid #efefef;
+  }
+  color: #e9d8ac;
+  font-size: 24px;
+  border-radius: 5px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 6px 20px;
+  width: auto;
+  cursor: pointer;
+`;
 
 const buttonStyle = css`
   background-color: #d9d9d974;
@@ -32,25 +55,28 @@ type Props =
       guestEventInfo: GuestEventInfo;
     }
   | { guest: Guest }
-  | { guestToken: string }
+  // | { guestToken: string }
   | {
       error: string;
     };
 
 export default function GuestToken(props: Props) {
-  const [onEditId, setOnEditId] = useState<number>(0);
+  const [clickYes, setClickYes] = useState(false);
+  const [clickNo, setClickNo] = useState(false);
   const [isAttending, setIsAttending] = useState(false);
-  const router = useRouter();
+
+  console.log(isAttending);
 
   async function updateAttendanceHandler() {
-    const id = onEditId;
+    console.log('clicked');
     const updateAttendanceResponse = await fetch(`/api/attendance`, {
       method: 'PUT',
       headers: {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        isAttending,
+        isAttending: isAttending,
+        guestToken: props.guestToken,
       }),
     });
   }
@@ -70,7 +96,7 @@ export default function GuestToken(props: Props) {
   return (
     <>
       <Head>
-        <title>eventname</title>
+        <title>Guest RSVP page</title>
         <meta
           name="description"
           content="This is a page showing the event where the guest can click on attending or not attending"
@@ -81,8 +107,9 @@ export default function GuestToken(props: Props) {
         <h1>Will you make it?</h1>
 
         <button
-          css={buttonStyle}
+          css={attendanceButton}
           onClick={() => {
+            setClickYes(true);
             setIsAttending(true);
             // get current status:
             // if cookie was placed before, check:
@@ -97,22 +124,34 @@ export default function GuestToken(props: Props) {
           Yes!
         </button>
         <button
-          css={buttonStyle}
+          css={attendanceButton}
           onClick={() => {
+            setClickNo(true);
             setIsAttending(false);
             setStringifiedCookie('attendance', 'not attending');
           }}
         >
           Sadly, no...
         </button>
-        <button css={buttonStyle}>send</button>
+        {clickYes ? <RSVPYes /> : ''}
+        {clickNo ? <RSVPNo /> : ''}
+        <button
+          css={buttonStyle}
+          onClick={() => {
+            updateAttendanceHandler();
+          }}
+        >
+          send
+        </button>
       </div>
     </>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const eventId = parseIntFromContextQuery(context.query.id);
+  // console.log('context.query 1', context.query);
+  const eventId = parseIntFromContextQuery(context.query.eventId);
+  // console.log('eventId', eventId);
 
   if (typeof eventId === 'undefined') {
     context.res.statusCode = 404;
@@ -122,16 +161,26 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   }
-  const guestToken = context.req.cookies.guestToken;
+  const guestToken = context.query.token;
 
-  console.log(guestToken);
+  // console.log('guestToken', guestToken);
+
+  // check if arr is array
+  const result = Array.isArray(guestToken);
+
+  if (result) {
+    return;
+  }
+  console.log('test not array');
+
+  console.log(`${guestToken} is not an array.`);
 
   if (!guestToken) {
     console.log('guest token', guestToken);
     context.res.statusCode = 404;
     return {
       props: {
-        error: 'no event id what that id found',
+        error: 'no guest with that token exists',
       },
     };
   }
@@ -140,7 +189,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     context.res.statusCode = 404;
     return {
       props: {
-        error: 'NFI',
+        error: 'no guest with that token exists',
       },
     };
   }
@@ -149,5 +198,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   console.log(context.query);
   console.log('guest token', guestToken);
-  return { props: {} };
+  return {
+    props: {
+      guestToken: guestToken,
+      eventId: eventId,
+    },
+  };
 }

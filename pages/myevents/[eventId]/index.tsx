@@ -15,6 +15,10 @@ import { getValidSessionByToken } from '../../../database/sessions';
 import { getUserBySessionToken, User } from '../../../database/users';
 import { parseIntFromContextQuery } from '../../../utils/contextQuery';
 
+const eventName = css`
+  font-size: 32px;
+`;
+
 const buttonStyle = css`
   background-color: #d9d9d974;
   color: #e9d8ac;
@@ -61,7 +65,7 @@ export default function Events(props: Props) {
           <h1>404 - this event could not be found</h1>
         </Head>
 
-        <Header username={props.user?.firstName} />
+        <Header firstName={props.user?.firstName} />
         <h1>Coming up</h1>
         <h2>Looks like you have nothing planned yet...</h2>
       </div>
@@ -94,7 +98,7 @@ export default function Events(props: Props) {
           />
           <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
         </Head>
-        <Header username={props.user?.firstName} />
+        <Header firstName={props.user?.firstName} />
         <button
           css={buttonStyle}
           onClick={async () => {
@@ -106,7 +110,7 @@ export default function Events(props: Props) {
         {props.hostEvent.map((hostEvent) => {
           return (
             <div key={`hostEvent-${hostEvent.id}`}>
-              {hostEvent.eventName}
+              <div css={eventName}>{hostEvent.eventName}</div>
 
               {hostEvent.dateTime}
               {hostEvent.location}
