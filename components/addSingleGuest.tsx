@@ -88,25 +88,25 @@ export default function AddSingleGuest(props: Props) {
       </Head>
       <h1>Add Guest</h1>
       <label>
-        First Name
+        first name
         <input
           placeholder="Diego"
           css={inputFieldStyle}
           value={guestFirstName}
           onChange={(event) => {
-            setGuestFirstName(event.currentTarget.value);
+            setGuestFirstName(event.currentTarget.value.toLowerCase());
           }}
         />
       </label>
       <br />
       <label>
-        Last Name
+        last name
         <input
           css={inputFieldStyle}
           placeholder="Smith"
           value={guestLastName}
           onChange={(event) => {
-            setGuestLastName(event.currentTarget.value);
+            setGuestLastName(event.currentTarget.value.toLowerCase());
           }}
         />
       </label>

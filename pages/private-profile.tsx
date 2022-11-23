@@ -11,6 +11,9 @@ import {
   User,
 } from '../database/users';
 
+const greeting = css`
+  padding: 20px;
+`;
 const buttonStyle = css`
   background-color: #d9d9d974;
   color: #e9d8ac;
@@ -38,7 +41,21 @@ const roundButtonStyle = css`
   text-align: center;
   cursor: pointer;
 `;
-
+const logout = css`
+  display: flex;
+  flex-direction: row-reverse;
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 22px;
+  border-radius: 5px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 6px 20px;
+  border-radius: 5px;
+  width: auto;
+  cursor: pointer;
+`;
 type Props = {
   user?: User;
   events?: Event;
@@ -91,12 +108,10 @@ export default function UserProfile(props: Props) {
       >
         back
       </button>
-      <br />
-      hi {props.user.username}!{}
-      <br />
-      <br />
+      <div css={greeting}>Hi {props.user.username}!</div>
+
       <button
-        css={buttonStyle}
+        css={logout}
         onClick={async () => {
           await logoutHandler();
         }}

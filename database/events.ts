@@ -24,7 +24,7 @@ export type Event = {
 export async function createEvent(
   eventName: string,
   location: string,
-  dateTime: number,
+  dateTime: string,
   description: string,
   hostUserId: number,
 ) {

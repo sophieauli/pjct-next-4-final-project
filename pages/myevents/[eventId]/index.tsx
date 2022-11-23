@@ -3,6 +3,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { hostname } from 'os';
 import Header from '../../../components/Header';
 import {
   Event,
@@ -49,7 +50,7 @@ export default function Events(props: Props) {
           <meta name="single event page" content="Event not found" />
         </Head>
         <h1>{props.error}</h1>
-        Click <Link href="/myevents"> here </Link> to be directed back to all
+        Click <Link href="/myevents"> here </Link> to be directed back to your
         events!
       </div>
     );
@@ -150,8 +151,6 @@ export async function getServerSideProps(
     };
   }
 
-  const userId = user.id;
-
   // retrieve eventId from url:
 
   const eventId = parseIntFromContextQuery(context.query.eventId);
@@ -169,12 +168,10 @@ export async function getServerSideProps(
     };
   }
 
-  const foundEvent = await getEventByEventId(eventId);
-  console.log(foundEvent);
-
-  // const foundEvent = await getEventByEventId(eventId);
-
-  if (typeof foundEvent === 'undefined') {
+  const foundEventBefore = await getEventByEventId(eventId);
+  const foundEvent = JSON.parse(JSON.stringify(foundEventBefore));
+  console.log('foundevent', foundEvent);
+  if (foundEvent.length === 0) {
     context.res.statusCode = 404;
     return {
       props: {
@@ -182,6 +179,23 @@ export async function getServerSideProps(
       },
     };
   }
+
+  const userId = user.id;
+  console.log('userid', userId);
+
+  console.log(foundEvent.hostUserId);
+  console.log(foundEvent);
+
+  if (userId !== foundEvent[0].hostUserId) {
+    return {
+      props: {
+        error: 'Only hosts allowed...',
+      },
+    };
+  }
+
+  // const foundEvent = await getEventByEventId(eventId);
+
   return {
     props: {
       user: user,

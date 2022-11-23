@@ -114,28 +114,7 @@ export default function Events(props: Props) {
           );
         })}
         <hr />
-        {/* {props.events.map((event) => {
-          return (
-            <div key={`event-${event.id}`}>
-              <Link href={`myevents/${event.id}`}>{event.eventName}</Link>
-              {event.dateTime}
-              {event.location}
-            </div>
-          );
-        })} */}
         <h2>My invites</h2>
-        {/*
-       {props.cookieTokenAttending.map((event) => {
-        return (
-          <div>
-
-              <Link href={`events/${cookieTokenAttending.id}`}>{event.eventName}</Link>
-              {cookieTokenAttending.dateTime}
-              {cookieTokenAttending.location}
-          </div>
-        )}
-
-    );} */}
         <button
           css={roundButtonStyle}
           onClick={async () => {
@@ -176,10 +155,12 @@ export async function getServerSideProps(
   }
   // get all events of that user:
 
-  const hostEvents = await getEventsByHostId(user.id);
+  const hostEventsBefore = await getEventsByHostId(user.id);
+  const hostEvents = JSON.parse(JSON.stringify(hostEventsBefore));
   console.log(hostEvents);
+  const eventsBefore = await getAllEvents();
+  const events = JSON.parse(JSON.stringify(eventsBefore));
 
-  const events = await getAllEvents();
   // console.log(JSON.parse(events), 'events');
   return {
     props: {
