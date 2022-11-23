@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react';
 import { sql } from './connect';
 import { Guest } from './guests';
 import { Session } from './sessions';
@@ -11,25 +12,40 @@ export type GuestEventInfo = {
   event_id: number;
   guest_id: number;
   guestToken: string;
+  isAttending: boolean;
 };
 
 export async function createGuestWithGuestTokenByEventId(
   eventId: number,
   guestId: number,
   guestToken: string,
+  isAttending: boolean,
 ) {
   const [guest] = await sql`
 INSERT INTO events_guests
-(event_id, guest_id, cookie_token_attending_guests)
+(event_id, guest_id, cookie_token_attending_guests, is_attending)
 VALUES
-(${eventId}, ${guestId}, ${guestToken})
+(${eventId}, ${guestId}, ${guestToken}, ${isAttending})
 RETURNING
 event_id,
 guest_id,
-cookie_token_attending_guests
+cookie_token_attending_guests,
+is_attending
 `;
 }
 
+export async function updateAttendanceGuest(
+  isAttending: boolean,
+  guestToken: string,
+) {
+  const statusAttendance = await sql`
+  UPDATE events_guests
+  SET (is_attending) = ${isAttending}
+  WHERE cookie_token_attending_guests = ${guestToken}
+
+  RETURNING is_attending
+  `;
+}
 // export async function getGuestByEventIdAndGuestToken(
 //   eventId: number,
 //   guestToken: string,
@@ -65,57 +81,3 @@ export async function getGuestByEventIdAndGuestToken(
 
   return guest;
 }
-
-// export async function createEventCookieToken(
-//   guestId: Guest['id'],
-//   cookie_token_attending_guests: string,
-// ) {
-//   const [eventCookieToken] = await sql<CookieTokenAttendingGuests[]>`
-//   INSERT INTO events_guests
-//     (cookie_token_attending_guests, guest_id)
-//   VALUES
-//     (${cookie_token_attending_guests}, ${guestId})
-//   RETURNING
-//     id,
-//     cookie_token_attending_guests
-//   `;
-// every time we create a new session by placing a cookie we delete the old one meaning:
-
-// await deleteExpiredSessions();
-
-//   return eventCookieToken;
-// }
-
-// export async function getEventByCookieToken(
-//   cookie_token_attending_guests: string,
-// ) {
-//   if (!cookie_token_attending_guests) return undefined;
-//   const [guest] = await sql<CookieTokenAttendingGuests[]>`
-//   SELECT
-//     *
-//   FROM
-//     events,
-//     events_guests
-//   WHERE
-//     events_guests.cookie_token_attending_guests = ${cookie_token_attending_guests}
-//   AND
-//     events_guests.event_id = events.id
-//   AND
-//   sessions.expiry_timestamp > now() `;
-
-//   return guest;
-// }
-
-// export async function deleteExpiredToken() {
-//   const [eventCookieToken] = await sql<CookieTokenAttendingGuests[]>`
-//   DELETE FROM
-//   events_guests
-//   WHERE expiry_timestamp < now()
-//   RETURNING
-//   id,
-//   token`;
-
-//   return eventCookieToken;
-// }
-
-//-> regarding expiry timestamp: ask Jose.

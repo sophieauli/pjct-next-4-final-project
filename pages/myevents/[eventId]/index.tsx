@@ -68,6 +68,21 @@ export default function Events(props: Props) {
     );
   }
   // if the user is logged in, this page will be rendered:
+  if (!props.user) {
+    return (
+      <>
+        <Head>
+          <title>No user</title>
+          <meta name="description" content="No user logged in" />
+          <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
+          <h1>404 - this event could not be found</h1>
+        </Head>
+
+        <h1>Please log in!</h1>
+      </>
+    );
+  }
+
   if (props.user) {
     return (
       <div>
@@ -140,6 +155,10 @@ export async function getServerSideProps(
   if (typeof eventId === 'undefined') {
     context.res.statusCode = 404;
     return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
       props: {
         error: 'We are sorry, but that event does not exist...',
       },

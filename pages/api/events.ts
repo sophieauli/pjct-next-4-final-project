@@ -2,6 +2,8 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
+import twilio from 'node-fetch';
+import { useState } from 'react';
 import { createEvent, getEventByEventId } from '../../database/events';
 import { createGuestWithGuestTokenByEventId } from '../../database/events_guests';
 import { Guest } from '../../database/guests';
@@ -77,6 +79,8 @@ export default async function CreateEventHandler(
       userId,
     );
 
+    const isAttending = false;
+
     const guests = request.body.addedGuest;
 
     const eventInfo = [];
@@ -96,8 +100,21 @@ export default async function CreateEventHandler(
         newEvent.id,
         guest.id,
         guestToken,
+        isAttending,
       );
-      // (this is where the sendinvite API will go)
+
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const client = require('twilio')(accountSid, authToken);
+
+      client.messages
+        .create({
+          from: '+13469109159',
+          body: 'Diego Test',
+          to: '+436641133183',
+        })
+        .then((message) => console.log(message.sid));
+
       eventInfo.push(fullEventInfo);
     }
 

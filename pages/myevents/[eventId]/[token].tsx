@@ -3,6 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import {
   getGuestByEventIdAndGuestToken,
   GuestEventInfo,
@@ -37,7 +38,22 @@ type Props =
     };
 
 export default function GuestToken(props: Props) {
+  const [onEditId, setOnEditId] = useState<number>(0);
+  const [isAttending, setIsAttending] = useState(false);
   const router = useRouter();
+
+  async function updateAttendanceHandler() {
+    const id = onEditId;
+    const updateAttendanceResponse = await fetch(`/api/attendance`, {
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        isAttending,
+      }),
+    });
+  }
   // if ('error' in props) {
   //   return (
   //     <div>
@@ -67,6 +83,7 @@ export default function GuestToken(props: Props) {
         <button
           css={buttonStyle}
           onClick={() => {
+            setIsAttending(true);
             // get current status:
             // if cookie was placed before, check:
             // if no cookie was placed, return undefined:
@@ -82,12 +99,13 @@ export default function GuestToken(props: Props) {
         <button
           css={buttonStyle}
           onClick={() => {
+            setIsAttending(false);
             setStringifiedCookie('attendance', 'not attending');
           }}
         >
           Sadly, no...
         </button>
-        <button>RSVP</button>
+        <button css={buttonStyle}>send</button>
       </div>
     </>
   );
@@ -100,7 +118,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     context.res.statusCode = 404;
     return {
       props: {
-        error: 'no event id what that id found',
+        error: 'no event id with that id found',
       },
     };
   }

@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import fetch from 'node-fetch';
 import { useState } from 'react';
 import AddSingleGuest from '../components/addSingleGuest';
 import { Guest } from '../database/guests';
@@ -93,6 +94,17 @@ export default function CreateEvent() {
   const router = useRouter();
 
   async function eventHandler() {
+    const body = { a: 1 };
+
+    const response = await fetch('https://api.twilio.com/2010-04-01', {
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await response.json();
+
+    console.log(data);
+
     const createEventResponse = await fetch('/api/events', {
       method: 'POST',
       headers: {
