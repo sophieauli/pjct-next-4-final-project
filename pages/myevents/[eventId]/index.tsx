@@ -182,7 +182,9 @@ export default function Events(props: Props) {
                 <ul>
                   <li>
                     {foundAttendingGuest.guestFirstName.charAt(0).toUpperCase()}
+                    {foundAttendingGuest.guestFirstName.slice(1)}{' '}
                     {foundAttendingGuest.guestLastName.charAt(0).toUpperCase()}
+                    {foundAttendingGuest.guestLastName.slice(1)}
                   </li>
                 </ul>
               </div>
