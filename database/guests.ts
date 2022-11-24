@@ -1,4 +1,3 @@
-import exp from 'node:constants';
 import { sql } from './connect';
 
 export type Guest = {
@@ -7,8 +6,6 @@ export type Guest = {
   guestLastName: string;
   guestPhoneNumber: string;
 };
-
-type SetAddedGuest = Guest[];
 
 export async function getGuestByPhonenumber(guestPhoneNumber: string) {
   if (!guestPhoneNumber) return undefined;
@@ -26,45 +23,38 @@ export async function getGuestByPhonenumber(guestPhoneNumber: string) {
   return guest;
 }
 
-// export async function createGuest(
-//   guestFirstName: string,
-//   guestLastName: string,
-//   guestPhoneNumber: string,
-// ) {
-//   const [guest] = await sql<Guest[]>`
+export async function createGuest(
+  guestFirstName: string,
+  guestLastName: string,
+  guestPhoneNumber: string,
+) {
+  const [guest] = await sql<Guest[]>`
 
-//   INSERT INTO guests
-//     (guest_first_name, guest_last_name, guest_phone_number)
-//   VALUES
-//     (${guestFirstName}, ${guestLastName}, ${guestPhoneNumber})
-//   RETURNING
-//     *
-//   `;
-
-//   return guest!;
-// }
-
-export async function createGuest(setAddedGuest: SetAddedGuest) {
-  setAddedGuest.forEach(async (createdGuest) => {
-    const guest = await sql`
   INSERT INTO guests
     (guest_first_name, guest_last_name, guest_phone_number)
-    VALUES (${createdGuest.guestFirstName}, ${createdGuest.guestLastName}, ${createdGuest.guestPhoneNumber})
-    RETURNING *
+  VALUES
+    (${guestFirstName}, ${guestLastName}, ${guestPhoneNumber})
+  RETURNING
+    *
   `;
-    return guest;
-  });
+
+  return guest!;
 }
 
-export async function getGuestIdByGuestId(id: number) {
-  const [guestId] = await sql<Guest[]>`
-  SELECT
-    guests.id
-  FROM
-    guests
-  WHERE
-    id = ${id}
-    `;
-
-  return guestId;
+// export async function getGuestByGuestId(guestId: number) {
+//   const foundGuest = await sql`
+//   SELECT guest_first_name, guest_last_name
+//   FROM guests
+//   WHERE id = ${guestId}
+//   `;
+//   return foundGuest;
+// }
+export async function getGuestByGuestId(guestId: number) {
+  if (!guestId) return undefined;
+  const [guest] = await sql<Guest[]>`
+  SELECT guest_first_name, guest_last_name
+  FROM guests
+  WHERE guests.id = ${guestId}
+  `;
+  return guest;
 }

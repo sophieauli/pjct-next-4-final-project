@@ -23,32 +23,40 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             width: 100vw;
             display: 'flex';
             justify-content: 'center';
-            align-items: 'center';
+            align-items: 'left';
             height: 200vh;
+            padding: 20px;
           }
           h1 {
             font-family: 'Saira';
             font-weight: 2000;
+            font-size: 42px;
             color: #e9d8ac;
-            text-align: left;
-            align-items: left;
+            /* text-align: left;
+            align-items: left; */
             width: 100vw;
             /* padding: 20px; */
           }
           h2 {
             font-family: 'Saira';
-            font-size: 22;
             color: #e9d8ac;
-            text-align: left;
-            align-items: center;
+            font-size: 38px;
+            /* text-align: left;
+            align-items: left; */
             width: 100vw;
             padding: 20px 0px 0px 2px;
-            a:link {
-              text-decoration: underline;
-            }
+          }
+          h3 {
+            font-family: 'Saira';
+            color: #e9d8ac;
+            font-size: 32px;
+            /* text-align: left;
+            align-items: left; */
+            width: 100vw;
+            padding: 20px 0px 0px 2px;
           }
           hr {
-            border-top: 1px solid #e9d8ac;
+            border: 1px solid #e9d8ac;
           }
         `}
       />

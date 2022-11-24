@@ -2,26 +2,28 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createEvent, Event, getEventByEventId } from '../../database/events';
-import { createEventCookieToken } from '../../database/events_guests';
+import { useState } from 'react';
+import { createEvent, getEventByEventId } from '../../database/events';
+import { createGuestWithGuestTokenByEventId } from '../../database/events_guests';
 import { Guest } from '../../database/guests';
 import { getUserBySessionToken, User } from '../../database/users';
-import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
+import {
+  createSerializedCookieTokenAttendingGuests,
+  createSerializedRegisterSessionTokenCookie,
+} from '../../utils/cookies';
 
 type Props = {
   guest: Guest;
-  user?: User;
+  user: User;
   event: Event;
 };
-
-// import { createCsrfSecret } from '../../utils/csrf';
 
 // body is part of the message we send with our api, we can also define its data type:
 
 export type CreateEventResponseBody =
   | { errors: [{ message: string }] }
   | { event: { eventName: string } };
-// above we are defining that there is an object type with a property called errors and user that could contain an array of one or more objects with a message.
+// above we are defining that there is an object type with a property called errors that could contain an array of one or more objects with a message and an event that could contain an object.
 
 export default async function CreateEventHandler(
   // const eventName = request.body.eventName
@@ -31,11 +33,25 @@ export default async function CreateEventHandler(
   if (request.method === 'POST') {
     // 1. check whether data is stored:
     const token = request.cookies.sessionToken;
-    const user = token && (await getUserBySessionToken(token));
-    if (user) {
-      const id = user.id;
-      const userId = id;
+
+    if (!token) {
+      return response.status(400).json({
+        errors: [{ message: 'token not found thus user not authorised' }],
+      });
     }
+    const user = await getUserBySessionToken(token);
+
+    if (!user) {
+      return response.status(400).json({
+        errors: [{ message: 'user not found.' }],
+      });
+    }
+    const id = user.id;
+    const userId = id;
+    // if (user) {
+    //   const id = user.id;
+    //   const userId = id;
+    // }
     if (
       // checking whether it is provided as a string:
       typeof request.body.eventName !== 'string' ||
@@ -48,26 +64,13 @@ export default async function CreateEventHandler(
       !request.body.description
     ) {
       return response.status(400).json({
-        errors: [
-          {
-            message:
-              'event information not provided correctly - please fill out every input field.',
-          },
-        ],
+        errors: [{ message: 'event information not provided correctly.' }],
       });
     }
-    // 2. check whether event has already been created - not necessary - maybe by date?:
 
-    const event = await getEventByEventId(request.body.event_id);
-    const userId = user?.id;
-    if (event) {
-      return response.status(401).json({
-        errors: [{ message: 'This event already exists.' }],
-      });
-    }
-    // 3. run the sql query to create the record in the database:
+    // run the sql query to create the record in the database:
 
-    const eventWithAllInfo = await createEvent(
+    const newEvent = await createEvent(
       request.body.eventName,
       request.body.location,
       request.body.dateTime,
@@ -75,36 +78,55 @@ export default async function CreateEventHandler(
       userId,
     );
 
-    // console.log(eventWithAllInfo);
-    // console.log(request.body.id);
-    // console.log(user.id);
-    // console.log(userId);
-    // console.log(user);
-    // insertIntoEventGuestTable
-    // twilio REST API
+    const isAttending = false;
 
-    // 5. optional: create a csrf token, which is a secret, user-specific token to prevent Cross-Site Request Forgeries:
-    //   const secret = await await createCsrfSecret();
-    // }
+    const guests = request.body.addedGuest;
 
-    // 6.Create a token and serialize a cookie with the token:
+    const eventInfo = [];
 
-    // const guestSession = await createEventCookieToken(
-    //   eventWithAllInfo.id,
-    //   crypto.randomBytes(80).toString('base64'),
-    // );
+    // here we create a token for every guest by running a loop and running the crypto function for every loop:
 
-    // 7. create an id:
+    for (const guest of guests) {
+      const guestToken = crypto
+        .randomBytes(45)
+        .toString('base64')
+        .replace(/\//g, '_')
+        .replace(/\+/g, '-') as string;
 
-    // const serializedGuestCookie = createSerializedRegisterSessionTokenCookie(
-    //   guestSession.cookie_token_attending_guests,
-    // );
+      // here we run the db query entering the event.id and guest.id as well as the token we created above:
+
+      const fullEventInfo = await createGuestWithGuestTokenByEventId(
+        newEvent.id,
+        guest.id,
+        guestToken,
+        isAttending,
+      );
+      // (this is where the sendinvite API will go)
+      eventInfo.push(fullEventInfo);
+    }
+
+    console.log(guests);
+
+    // 6. Since we already have the guestToken, all that's left is to serialize a cookie with the token. :
+
+    // const serializedGuestCookie =
+    //   await createSerializedCookieTokenAttendingGuests(guestToken.guestToken);
 
     response
       .status(200)
-      //     .setHeader('Set-Cookie', serializedGuestCookie)
-      .json({ event: { eventName: eventWithAllInfo.eventName } });
+      // .setHeader('Set-Cookie', serializedGuestCookie)
+      .json({ event: { eventName: newEvent.eventName } });
   } else {
     response.status(401).json({ errors: [{ message: 'Method not allowed' }] });
   }
 }
+
+//   eventWithAllInfo.id,
+//   crypto.randomBytes(80).toString('base64'),
+// );
+
+// // 7. create a id:
+
+// const serializedGuestCookie = createSerializedRegisterSessionTokenCookie(
+//   guestSession.cookie_token_attending_guests,
+// );

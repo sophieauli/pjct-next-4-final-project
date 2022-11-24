@@ -25,10 +25,11 @@ export default function Layout(props: Props) {
   } else {
     return (
       <>
+        <Header />
         <Head>
           <link rel="icon" />
         </Head>
-        <Header />
+
         <main>{props.children}</main>
 
         <Footer />

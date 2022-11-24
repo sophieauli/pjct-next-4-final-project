@@ -4,7 +4,7 @@ const footerStyles = css`
   margin-top: 20px;
   padding: 15px 20px;
   padding-top: 10px;
-  border-top: 1px solid #999999;
+  border-top: 2px solid;
 `;
 
 export default function Footer() {

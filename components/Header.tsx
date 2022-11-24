@@ -3,7 +3,6 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getValidSessionByToken } from '../database/sessions';
 import {
   getUserBySessionToken,
   getUserByUsername,
@@ -11,33 +10,49 @@ import {
 } from '../database/users';
 
 const headerStyle = css`
-  /* position: absolute;
-  top: 20px;
-  right: 0px;
-  padding: 20px; */
-
   display: flex;
   justify-content: flex-start;
   flex-direction: row-reverse;
-  padding: 10px;
-  /* width: 100%; */
-  /* padding: 10px 20px 20px; */
+`;
+
+const privateProfile = css`
+  display: flex;
+
+  width: 27vw;
+
+  .firstName {
+    display: flex;
+    margin-right: 20px;
+    align-items: center;
+    padding: 0px 0px 7px 20px;
+  }
+  .userIcon {
+    padding: 14px 10px 10px 0px;
+  }
 `;
 
 export default function Header(props: any) {
+  const firstName =
+    props.firstName.charAt(0).toUpperCase() + props.firstName.slice(1);
   return (
     <header>
       <title>Header</title>
       <meta name="description" content="XYZ" />
       <nav css={headerStyle}>
-        <div>
-          <Link href="/profile"> {props.username} </Link>
-          <Image
-            src="/usericon.svg"
-            alt="Join Diego beige"
-            width="50"
-            height="50"
-          />
+        <div css={privateProfile}>
+          <div className="firstName">
+            <Link href="/private-profile"> {firstName} </Link>
+          </div>
+          <div className="userIcon">
+            <a href="/private-profile">
+              <Image
+                src="/usericon.svg"
+                alt="Join Diego beige"
+                width="50"
+                height="50"
+              />
+            </a>
+          </div>
         </div>
       </nav>
     </header>

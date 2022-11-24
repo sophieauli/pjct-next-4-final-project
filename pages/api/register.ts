@@ -59,12 +59,14 @@ export default async function RegisterHandler(
     //   const secret = await await createCsrfSecret();
     // }
 
-    // 6.Create a session token and serialize a cookie with the token:
+    // 6.Here we run the query to make a record on the sessions table consisting of the user_id (coming from the actual user id) and also creating a session token we will enter into the table as well:
 
     const session = await createSession(
       userWithoutPassword.id,
       crypto.randomBytes(80).toString('base64'),
     );
+
+    // here we serialize a cookie with the token created above:
 
     const serializedCookie = createSerializedRegisterSessionTokenCookie(
       session.token,

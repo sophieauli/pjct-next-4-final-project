@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Event, getHostEvents } from '../database/events';
+import { Event, getEventsByHostId } from '../database/events';
 import { getValidSessionByToken } from '../database/sessions';
 import {
   getUserBySessionToken,
@@ -11,6 +11,9 @@ import {
   User,
 } from '../database/users';
 
+const greeting = css`
+  padding: 20px;
+`;
 const buttonStyle = css`
   background-color: #d9d9d974;
   color: #e9d8ac;
@@ -38,7 +41,21 @@ const roundButtonStyle = css`
   text-align: center;
   cursor: pointer;
 `;
-
+const logout = css`
+  display: flex;
+  flex-direction: row-reverse;
+  background-color: #d9d9d974;
+  color: #e9d8ac;
+  font-size: 22px;
+  border-radius: 5px;
+  border-width: 1px;
+  border: solid;
+  border-color: #e9d8ac;
+  padding: 6px 20px;
+  border-radius: 5px;
+  width: auto;
+  cursor: pointer;
+`;
 type Props = {
   user?: User;
   events?: Event;
@@ -65,6 +82,7 @@ export default function UserProfile(props: Props) {
         <Head>
           <title>User not found</title>
           <meta name="description" content="User not found" />
+          <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
           <h1>404 - this user could not be found</h1>
         </Head>
       </div>
@@ -82,11 +100,18 @@ export default function UserProfile(props: Props) {
         />
         <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
-      Hi {props.user.firstName}! username: {props.user.username}
-      <br />
-      <br />
       <button
         css={buttonStyle}
+        onClick={async () => {
+          await router.push(`/myevents`);
+        }}
+      >
+        back
+      </button>
+      <div css={greeting}>Hi {props.user.username}!</div>
+
+      <button
+        css={logout}
         onClick={async () => {
           await logoutHandler();
         }}

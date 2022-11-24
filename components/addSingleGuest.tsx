@@ -2,9 +2,10 @@ import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Guest } from '../database/guests';
 import { getValidSessionByToken } from '../database/sessions';
+import { User } from '../database/users';
 import { AddGuestResponseBody } from '../pages/api/guests';
 
 const lighterText = css`
@@ -36,17 +37,17 @@ const inputFieldStyle = css`
   border-color: #e9d8ac;
   display: table-cell;
 `;
+type Props = {
+  setAddedGuest: Dispatch<SetStateAction<Guest[]>>;
+  addedGuest: any[];
+};
+// type AddedGuest = Guest[];
 
-
-
-type AddedGuest = Guest[];
-
-export default function AddSingleGuest() {
+export default function AddSingleGuest(props: Props) {
   const [guestFirstName, setGuestFirstName] = useState('');
   const [guestLastName, setGuestLastName] = useState('');
-  const [GuestPhoneNumber, setGuestPhoneNumber] = useState('');
+  const [guestPhoneNumber, setGuestPhoneNumber] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
-  const [addedGuest, setAddedGuest] = useState<Guest[]>([]);
   const router = useRouter();
 
   async function guestHandler() {
@@ -58,7 +59,7 @@ export default function AddSingleGuest() {
       body: JSON.stringify({
         guestFirstName: guestFirstName.toLowerCase(),
         guestLastName: guestLastName.toLowerCase(),
-        guestPhoneNumber: GuestPhoneNumber,
+        guestPhoneNumber: guestPhoneNumber,
       }),
     });
     console.log(addGuestResponse);
@@ -74,7 +75,8 @@ export default function AddSingleGuest() {
 
       return console.log(addGuestResponseBody.errors);
     }
-    setAddedGuest([...addedGuest, addGuestResponseBody]);
+    // here we are adding the newly addedGuest to the response body:
+    props.setAddedGuest([...props.addedGuest, addGuestResponseBody]);
   }
 
   return (
@@ -92,7 +94,8 @@ export default function AddSingleGuest() {
           css={inputFieldStyle}
           value={guestFirstName}
           onChange={(event) => {
-            setGuestFirstName(event.currentTarget.value.toLowerCase());
+            // setGuestFirstName(event.currentTarget.value.toLowerCase());
+            setGuestFirstName(event.currentTarget.value);
           }}
         />
       </label>
@@ -104,7 +107,8 @@ export default function AddSingleGuest() {
           placeholder="Smith"
           value={guestLastName}
           onChange={(event) => {
-            setGuestLastName(event.currentTarget.value.toLowerCase());
+            // setGuestLastName(event.currentTarget.value.toLowerCase());
+            setGuestLastName(event.currentTarget.value);
           }}
         />
       </label>
@@ -115,7 +119,7 @@ export default function AddSingleGuest() {
           placeholder="+43 123 1234567"
           type="tel"
           css={inputFieldStyle}
-          value={GuestPhoneNumber}
+          value={guestPhoneNumber}
           onChange={(event) => {
             setGuestPhoneNumber(event.currentTarget.value);
           }}
@@ -135,11 +139,13 @@ export default function AddSingleGuest() {
       </button>
       <br />
       <h2>Guestlist</h2>
-      {addedGuest.map((guest) => {
+      {props.addedGuest.map((guest) => {
         return (
           <div key={guest.id}>
-            {guest.guestFirstName} {guest.guestLastName}{' '}
-            {guest.guestPhoneNumber}
+            {guest.guestFirstName.charAt(0).toUpperCase()}
+            {guest.guestFirstName.slice(1)}{' '}
+            {guest.guestLastName.charAt(0).toUpperCase()}
+            {guest.guestLastName.slice(1)} {guest.guestPhoneNumber}
           </div>
         );
       })}

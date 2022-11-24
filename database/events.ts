@@ -1,6 +1,17 @@
 import { sql } from './connect';
 import { User } from './users';
 
+// import { User } from './users';
+
+export type HostEvent = {
+  id: number;
+  eventName: string;
+  location: string;
+  dateTime: string;
+  description: string;
+  hostUserId: number;
+};
+
 export type Event = {
   id: number;
   eventName: string;
@@ -8,7 +19,6 @@ export type Event = {
   dateTime: string;
   description: string;
   hostUserId: number;
-  // hostUserId is the same as user_id in the Session type
 };
 
 export async function createEvent(
@@ -16,13 +26,13 @@ export async function createEvent(
   location: string,
   dateTime: string,
   description: string,
-  id: number,
-): Promise<any> {
-  const [newEvent] = await sql<Event[]>`
+  hostUserId: number,
+) {
+  const [newEvent] = await sql<{ id: number; eventName: string }[]>`
   INSERT INTO events
     (event_name, location, date_time, description, host_user_id)
   VALUES
-    (${eventName}, ${location}, ${dateTime}, ${description}, ${id})
+    (${eventName}, ${location}, ${dateTime}, ${description}, ${hostUserId})
   RETURNING
     *
   `;
@@ -31,61 +41,46 @@ export async function createEvent(
 }
 
 export async function getAllEvents() {
-  const events = await sql`
+  const events = await sql<Event[]>`
   SELECT
     *
   FROM
     events
     `;
-
   return events;
 }
 
 export async function getEventByEventId(id: number) {
-  const [eventId] = await sql<Event[]>`
+  const eventId = await sql<Event[]>`
   SELECT
     *
   FROM
     events
   WHERE
-    id = ${id}
+    events.id = ${id}
     `;
 
   return eventId;
 }
-// export async function getEventByEventId(id: number) {
-//   if (!id) return undefined;
 
-//   const [eventId] = await sql<Event[]>`
-//   SELECT
-//     id,
-//     eventName
-//   FROM
-//     events
-//   WHERE
-//     events.eventId = ${id}
-//     `;
+export async function getEventsByHostId(userId: number) {
+  // if (!hostEvents) return undefined;
 
-//   return eventId;
-// }
-
-export async function getHostEvents(host_user_id: string) {
-  if (!host_user_id) return undefined;
-
-  const [hostEvent] = await sql<Event[]>`
+  const hostEvents = await sql<HostEvent[]>`
   SELECT
-    events.id,
-    events.event_name,
-    events.location,
-    events.date_time,
-    events.description,
-    events.host_user_id
+    *
   FROM
-    events,
-    users
+    events
+    -- users
   WHERE
-    events.host_user_id = users.id
+    events.host_user_id = ${userId}
     `;
 
-  return hostEvent;
+  return hostEvents;
+}
+
+export async function getSingleHostEventById(eventId: number, userId: number) {
+  const hostEventId = await sql<HostEvent[]>`
+  SELECT * FROM events WHERE id = ${eventId} AND host_user_id = ${userId}`;
+  return hostEventId;
 }
