@@ -39,8 +39,18 @@ const inputFieldStyle = css`
   display: table-cell;
 `;
 
+const loginTitle = css`
+  text-align: center;
+  font-family: 'Saira';
+  font-weight: bold;
+  font-size: 42px;
+  color: #e9d8ac;
+  width: 100vw;
+`;
+
 const loginSectionStyle = css`
   text-align: center;
+  padding: 20px;
 `;
 
 export default function Login(props: Props) {
@@ -96,43 +106,46 @@ export default function Login(props: Props) {
         <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
       </Head>
 
-      <h1>Login</h1>
+      <div css={loginTitle}>Login</div>
       <div css={loginSectionStyle}>
         {errors.map((error) => {
           return <p key={error.message}>ERROR: {error.message}</p>;
         })}
-        <label>
-          username
-          <input
-            css={inputFieldStyle}
-            value={username}
-            onChange={(event) => {
-              setUsername(event.currentTarget.value.toLowerCase());
+        <div>
+          <label>
+            username
+            <input
+              css={inputFieldStyle}
+              value={username}
+              onChange={(event) => {
+                setUsername(event.currentTarget.value.toLowerCase());
+              }}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            password
+            <input
+              css={inputFieldStyle}
+              type="password"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.currentTarget.value);
+              }}
+            />
+          </label>
+        </div>
+        <div css={loginSectionStyle}>
+          <button
+            onClick={async () => {
+              await loginHandler();
             }}
-          />
-        </label>
-        <br />
-        <label>
-          password
-          <input
-            css={inputFieldStyle}
-            type="password"
-            value={password}
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-            }}
-          />
-        </label>
-        <br />
-        <button
-          onClick={async () => {
-            await loginHandler();
-          }}
-          css={buttonStyle}
-        >
-          login
-        </button>
-        <br />
+            css={buttonStyle}
+          >
+            login
+          </button>
+        </div>
         <div>
           Not a member yet? <Link href="/register"> Sign up </Link>
         </div>

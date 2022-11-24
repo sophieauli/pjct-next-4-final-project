@@ -40,3 +40,21 @@ export async function createGuest(
 
   return guest!;
 }
+
+// export async function getGuestByGuestId(guestId: number) {
+//   const foundGuest = await sql`
+//   SELECT guest_first_name, guest_last_name
+//   FROM guests
+//   WHERE id = ${guestId}
+//   `;
+//   return foundGuest;
+// }
+export async function getGuestByGuestId(guestId: number) {
+  if (!guestId) return undefined;
+  const [guest] = await sql<Guest[]>`
+  SELECT guest_first_name, guest_last_name
+  FROM guests
+  WHERE guests.id = ${guestId}
+  `;
+  return guest;
+}

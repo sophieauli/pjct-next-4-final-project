@@ -12,12 +12,35 @@ import {
   getSingleHostEventById,
   HostEvent,
 } from '../../../database/events';
+import {
+  getAttendingGuestIds,
+  getInvitedGuestIds,
+  GuestEventInfo,
+} from '../../../database/events_guests';
+import { getGuestByGuestId, Guest } from '../../../database/guests';
+// import { getGuestByGuestId } from '../../../database/guests';
 import { getValidSessionByToken } from '../../../database/sessions';
 import { getUserBySessionToken, User } from '../../../database/users';
 import { parseIntFromContextQuery } from '../../../utils/contextQuery';
 
 const eventName = css`
-  font-size: 32px;
+  font-size: 38px;
+  color: #e9d8ac;
+  min-width: 10px;
+  padding: 20px;
+  border-radius: 10px;
+  border-width: 1px;
+  font-weight: bold;
+  border: solid;
+  margin: 20px 0px 20px;
+`;
+
+const eventInfo = css`
+  font-size: 28px;
+  color: #e9d8ac;
+  min-width: 10px;
+  padding: 20px 10px 20px;
+  margin: 20px 0px 20px;
 `;
 
 const buttonStyle = css`
@@ -33,8 +56,22 @@ const buttonStyle = css`
   cursor: pointer;
 `;
 
+const status = css`
+  border-bottom: 2px solid;
+  font-family: 'Saira';
+  font-weight: bold;
+  color: #e9d8ac;
+  font-size: 38px;
+  margin-bottom: 40px;
+`;
+
 type Props =
-  | { user?: User; hostEvent: HostEvent[] }
+  | {
+      user?: User;
+      hostEvent: HostEvent[];
+      foundInvitedGuests?: (Guest | undefined)[];
+      foundAttendingGuests?: (Guest | undefined)[];
+    }
   | {
       error: string;
     };
@@ -72,7 +109,7 @@ export default function Events(props: Props) {
       </div>
     );
   }
-  // if the user is logged in, this page will be rendered:
+  // if the user is not logged in, this page will be rendered:
   if (!props.user) {
     return (
       <>
@@ -111,12 +148,65 @@ export default function Events(props: Props) {
         {props.hostEvent.map((hostEvent) => {
           return (
             <div key={`hostEvent-${hostEvent.id}`}>
-              <div css={eventName}>{hostEvent.eventName}</div>
-
-              {hostEvent.dateTime}
-              {hostEvent.location}
+              <div css={eventName}>
+                {hostEvent.eventName.charAt(0).toUpperCase()}
+                {hostEvent.eventName.slice(1)}
+              </div>
+              <div css={eventInfo}>
+                When: {''}
+                {hostEvent.dateTime.slice(8, 10)}
+                {'/'}
+                {hostEvent.dateTime.slice(5, 7)}
+                {'/'}
+                {hostEvent.dateTime.slice(0, 4)} at{' '}
+                {hostEvent.dateTime.slice(11, 16).replace(':', 'h')}
+                <br />
+                Where: {hostEvent.location.charAt(0).toUpperCase()}
+                {hostEvent.location.slice(1)}
+                <br />
+                Info: {hostEvent.description}
+              </div>
             </div>
           );
+        })}
+
+        <div css={status}>Attending</div>
+
+        {props.foundAttendingGuests?.map((foundAttendingGuest) => {
+          if (!foundAttendingGuest) {
+            return <div>Looks like noone has rsvp d yet...</div>;
+          }
+          if (foundAttendingGuest) {
+            return (
+              <div key={`guest-${foundAttendingGuest.id}`}>
+                <ul>
+                  <li>
+                    {foundAttendingGuest.guestFirstName.charAt(0).toUpperCase()}
+                    {foundAttendingGuest.guestLastName.charAt(0).toUpperCase()}
+                  </li>
+                </ul>
+              </div>
+            );
+          }
+        })}
+
+        <div css={status}>Invited</div>
+
+        {props.foundInvitedGuests?.map((foundInvitedGuest) => {
+          if (foundInvitedGuest) {
+            return (
+              <div key={`guest-${foundInvitedGuest.id}`}>
+                <ul>
+                  <li>
+                    {foundInvitedGuest.guestFirstName.charAt(0).toUpperCase()}
+                    {foundInvitedGuest.guestFirstName.slice(1)}{' '}
+                    {foundInvitedGuest.guestLastName.charAt(0).toUpperCase()}
+                    {foundInvitedGuest.guestLastName.slice(1)}{' '}
+                  </li>
+                </ul>
+              </div>
+            );
+          }
         })}
       </div>
     );
@@ -130,6 +220,7 @@ export async function getServerSideProps(
 
   // get the token :
   const token = context.req.cookies.sessionToken;
+  // console.log('token', token);
   // if no token: return to first page
   if (!token || !(await getValidSessionByToken(token))) {
     return {
@@ -141,7 +232,7 @@ export async function getServerSideProps(
   }
   // get user that is logged in after having gotten "his" token:
   const user = await getUserBySessionToken(token);
-  console.log(user);
+  // console.log('user', user);
   // if no user is logged in:
   if (!user) {
     context.res.statusCode = 404;
@@ -154,6 +245,7 @@ export async function getServerSideProps(
   // retrieve eventId from url:
 
   const eventId = parseIntFromContextQuery(context.query.eventId);
+  // console.log('eventID', context.query.eventId);
 
   if (typeof eventId === 'undefined') {
     context.res.statusCode = 404;
@@ -169,8 +261,9 @@ export async function getServerSideProps(
   }
 
   const foundEventBefore = await getEventByEventId(eventId);
+  // console.log('foundEventBefore', foundEventBefore);
   const foundEvent = JSON.parse(JSON.stringify(foundEventBefore));
-  console.log('foundevent', foundEvent);
+  // console.log('foundevent', foundEvent);
   if (foundEvent.length === 0) {
     context.res.statusCode = 404;
     return {
@@ -180,11 +273,77 @@ export async function getServerSideProps(
     };
   }
 
-  const userId = user.id;
-  console.log('userid', userId);
+  const foundInvitedGuestIds: GuestEventInfo[] | undefined =
+    await getInvitedGuestIds(eventId);
 
-  console.log(foundEvent.hostUserId);
-  console.log(foundEvent);
+  // as unknown as number
+  console.log('foundGuestIds', foundInvitedGuestIds);
+
+  const foundAttendingGuestIds: GuestEventInfo[] | undefined =
+    await getAttendingGuestIds(eventId);
+
+  if (typeof foundInvitedGuestIds === 'undefined') {
+    context.res.statusCode = 404;
+    return {
+      props: {
+        error: 'no guest id with that id found',
+      },
+    };
+  }
+
+  if (!foundInvitedGuestIds) {
+    return {
+      props: {
+        error: 'no guests invited',
+      },
+    };
+  }
+
+  if (typeof foundAttendingGuestIds === 'undefined') {
+    context.res.statusCode = 404;
+    return {
+      props: {
+        error: 'no guest id with that id found',
+      },
+    };
+  }
+
+  if (!foundAttendingGuestIds) {
+    return {
+      props: {
+        error: 'no guests attending',
+      },
+    };
+  }
+
+  const allInvitedGuests = await Promise.all(
+    foundInvitedGuestIds.map(async (foundGuestId) => {
+      const guest = await getGuestByGuestId(foundGuestId.guestId);
+      if (!guest) {
+        return;
+      }
+      return guest;
+    }),
+  );
+  const attendingGuests = await Promise.all(
+    foundAttendingGuestIds.map(async (foundAttendingGuestId) => {
+      const guest = await getGuestByGuestId(foundAttendingGuestId.guestId);
+      if (!guest) {
+        return;
+      }
+      return guest;
+    }),
+  );
+
+  console.log('attendingGuests', attendingGuests);
+
+  // console.log('foundGuests', foundGuests);
+
+  const userId = user.id;
+  // console.log('userid', userId);
+
+  // console.log('hostUserId', foundEvent[0].hostUserId);
+  // console.log('foundEvent', foundEvent);
 
   if (userId !== foundEvent[0].hostUserId) {
     return {
@@ -200,6 +359,8 @@ export async function getServerSideProps(
     props: {
       user: user,
       hostEvent: foundEvent,
+      foundInvitedGuests: allInvitedGuests,
+      foundAttendingGuests: attendingGuests,
     },
   };
 }

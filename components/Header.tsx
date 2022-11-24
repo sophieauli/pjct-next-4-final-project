@@ -13,7 +13,22 @@ const headerStyle = css`
   display: flex;
   justify-content: flex-start;
   flex-direction: row-reverse;
-  padding: 10px;
+`;
+
+const privateProfile = css`
+  display: flex;
+
+  width: 27vw;
+
+  .firstName {
+    display: flex;
+    margin-right: 20px;
+    align-items: center;
+    padding: 0px 0px 7px 20px;
+  }
+  .userIcon {
+    padding: 14px 10px 10px 0px;
+  }
 `;
 
 export default function Header(props: any) {
@@ -24,14 +39,20 @@ export default function Header(props: any) {
       <title>Header</title>
       <meta name="description" content="XYZ" />
       <nav css={headerStyle}>
-        <div>
-          <Link href="/private-profile"> {firstName} </Link>
-          <Image
-            src="/usericon.svg"
-            alt="Join Diego beige"
-            width="50"
-            height="50"
-          />
+        <div css={privateProfile}>
+          <div className="firstName">
+            <Link href="/private-profile"> {firstName} </Link>
+          </div>
+          <div className="userIcon">
+            <a href="/private-profile">
+              <Image
+                src="/usericon.svg"
+                alt="Join Diego beige"
+                width="50"
+                height="50"
+              />
+            </a>
+          </div>
         </div>
       </nav>
     </header>

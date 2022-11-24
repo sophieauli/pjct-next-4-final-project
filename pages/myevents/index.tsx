@@ -17,15 +17,28 @@ import { getUserBySessionToken, User } from '../../database/users';
 const eventBox = css`
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  width: 400px;
+  padding: 20px 0px 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: auto;
   border: solid;
   border-color: #e9d8ac;
   border-radius: 40px;
+  text-align: center;
+  background-color: #d9d9d974;
+  font-size: 24px;
 `;
 
 const eventName = css`
   font-size: 32px;
+  font-weight: bold;
+`;
+
+const createEvent = css`
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  padding: 20px 0px 20px;
 `;
 
 const roundButtonStyle = css`
@@ -98,32 +111,43 @@ export default function Events(props: Props) {
           <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
         </Head>
         <Header firstName={props.user?.firstName} />
-        <h1>Coming up</h1>
+        {/* <h1>Coming up</h1> */}
         <h2>My events</h2>
         {props.hostEvents.map((hostEvent) => {
           return (
             <div key={`hostEvent-${hostEvent.id}`} css={eventBox}>
-              <Link href={`myevents/${hostEvent.id}`}>
-                {hostEvent.eventName}
+              <Link href={`myevents/${hostEvent.id}`} css={eventName}>
+                {hostEvent.eventName.charAt(0).toUpperCase()}
+                {hostEvent.eventName.slice(1)}
               </Link>
+              {/* const firstName = props.firstName.charAt(0).toUpperCase() +
+              props.firstName.slice(1);  */}
+              When: {''}
+              {hostEvent.dateTime.slice(8, 10)}
+              {'/'}
+              {hostEvent.dateTime.slice(5, 7)}
+              {'/'}
+              {hostEvent.dateTime.slice(0, 4)} at{' '}
+              {hostEvent.dateTime.slice(11, 16).replace(':', 'h')}
               <br />
-              When: {hostEvent.dateTime}
-              <br />
-              Where: {hostEvent.location}
+              Where: {hostEvent.location.charAt(0).toUpperCase()}
+              {hostEvent.location.slice(1)}
             </div>
           );
         })}
         <hr />
-        <h2>My invites</h2>
-        <button
-          css={roundButtonStyle}
-          onClick={async () => {
-            await router.push(`/newevent`);
-          }}
-        >
-          +
-        </button>{' '}
-        create an event!
+        <div css={createEvent}>
+          <button
+            css={roundButtonStyle}
+            onClick={async () => {
+              await router.push(`/newevent`);
+            }}
+          >
+            +
+          </button>{' '}
+          Create an event!
+        </div>
+        {/* <h2>My invites</h2> */}
       </>
     );
   }

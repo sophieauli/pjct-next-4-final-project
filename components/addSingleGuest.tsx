@@ -94,7 +94,8 @@ export default function AddSingleGuest(props: Props) {
           css={inputFieldStyle}
           value={guestFirstName}
           onChange={(event) => {
-            setGuestFirstName(event.currentTarget.value.toLowerCase());
+            // setGuestFirstName(event.currentTarget.value.toLowerCase());
+            setGuestFirstName(event.currentTarget.value);
           }}
         />
       </label>
@@ -106,7 +107,8 @@ export default function AddSingleGuest(props: Props) {
           placeholder="Smith"
           value={guestLastName}
           onChange={(event) => {
-            setGuestLastName(event.currentTarget.value.toLowerCase());
+            // setGuestLastName(event.currentTarget.value.toLowerCase());
+            setGuestLastName(event.currentTarget.value);
           }}
         />
       </label>
@@ -140,8 +142,10 @@ export default function AddSingleGuest(props: Props) {
       {props.addedGuest.map((guest) => {
         return (
           <div key={guest.id}>
-            {guest.guestFirstName} {guest.guestLastName}{' '}
-            {guest.guestPhoneNumber}
+            {guest.guestFirstName.charAt(0).toUpperCase()}
+            {guest.guestFirstName.slice(1)}{' '}
+            {guest.guestLastName.charAt(0).toUpperCase()}
+            {guest.guestLastName.slice(1)} {guest.guestPhoneNumber}
           </div>
         );
       })}

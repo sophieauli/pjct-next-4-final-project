@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { sql } from './connect';
+import { Event } from './events';
 import { Guest } from './guests';
 import { Session } from './sessions';
 
@@ -9,8 +10,8 @@ import { Session } from './sessions';
 // };
 
 export type GuestEventInfo = {
-  event_id: number;
-  guest_id: number;
+  eventId: number;
+  guestId: number;
   guestToken: string;
   isAttending: boolean;
 };
@@ -62,6 +63,25 @@ export async function updateAttendanceGuest(
 
 //   return token;
 // }
+
+export async function getInvitedGuestIds(eventId: number) {
+  const attendingGuest = await sql<GuestEventInfo[]>`
+  SELECT guest_id
+  FROM events_guests
+  WHERE event_id = ${eventId}
+  `;
+  return attendingGuest;
+}
+
+export async function getAttendingGuestIds(eventId: number) {
+  const attendingGuest = await sql<GuestEventInfo[]>`
+  SELECT guest_id
+  FROM events_guests
+  WHERE event_id = ${eventId}
+  AND is_attending = ${true}
+  `;
+  return attendingGuest;
+}
 
 export async function getGuestByEventIdAndGuestToken(
   eventId: number,

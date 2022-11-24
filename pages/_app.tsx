@@ -30,6 +30,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           h1 {
             font-family: 'Saira';
             font-weight: 2000;
+            font-size: 42px;
             color: #e9d8ac;
             /* text-align: left;
             align-items: left; */
@@ -38,15 +39,24 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           }
           h2 {
             font-family: 'Saira';
-            font-size: 22;
             color: #e9d8ac;
+            font-size: 38px;
+            /* text-align: left;
+            align-items: left; */
+            width: 100vw;
+            padding: 20px 0px 0px 2px;
+          }
+          h3 {
+            font-family: 'Saira';
+            color: #e9d8ac;
+            font-size: 32px;
             /* text-align: left;
             align-items: left; */
             width: 100vw;
             padding: 20px 0px 0px 2px;
           }
           hr {
-            border-top: 1px solid #e9d8ac;
+            border: 1px solid #e9d8ac;
           }
         `}
       />

@@ -80,19 +80,7 @@ export default function GuestToken(props: Props) {
       }),
     });
   }
-  // if ('error' in props) {
-  //   return (
-  //     <div>
-  //       <Head>
-  //         <title>Event not found</title>
-  //         <meta name="single event page" content="Event not found" />
-  //       </Head>
-  //       <h1>{props.error}</h1>
-  //       Click <Link href="/myevents"> here </Link> to be directed back to all
-  //       events!
-  //     </div>
-  //   );
-  // }
+
   return (
     <>
       <Head>
