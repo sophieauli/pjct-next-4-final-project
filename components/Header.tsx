@@ -18,7 +18,7 @@ const headerStyle = css`
 const privateProfile = css`
   display: flex;
 
-  width: 27vw;
+  width: 20vw;
 
   .firstName {
     display: flex;
