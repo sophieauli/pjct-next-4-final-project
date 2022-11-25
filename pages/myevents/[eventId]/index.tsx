@@ -3,15 +3,8 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { hostname } from 'os';
 import Header from '../../../components/Header';
-import {
-  Event,
-  getEventByEventId,
-  getEventsByHostId,
-  getSingleHostEventById,
-  HostEvent,
-} from '../../../database/events';
+import { getEventByEventId, HostEvent } from '../../../database/events';
 import {
   getAttendingGuestIds,
   getInvitedGuestIds,
@@ -125,94 +118,90 @@ export default function Events(props: Props) {
     );
   }
 
-  if (props.user) {
-    return (
-      <div>
-        <Head>
-          <title>Single Event</title>
-          <meta
-            name="description"
-            content="This is a page showing the single event"
-          />
-          <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
-        </Head>
-        <Header firstName={props.user?.firstName} />
-        <button
-          css={buttonStyle}
-          onClick={async () => {
-            await router.push(`/myevents`);
-          }}
-        >
-          back
-        </button>
-        {props.hostEvent.map((hostEvent) => {
+  // if (props.user) {
+  return (
+    <div>
+      <Head>
+        <title>Single Event</title>
+        <meta
+          name="description"
+          content="This is a page showing the single event"
+        />
+        <link rel="icon" href="/App-Icon-Logo-Diego.ico" />
+      </Head>
+      <Header firstName={props.user.firstName} />
+      <button
+        css={buttonStyle}
+        onClick={async () => {
+          await router.push(`/myevents`);
+        }}
+      >
+        back
+      </button>
+      {props.hostEvent.map((hostEvent) => {
+        return (
+          <div key={`hostEvent-${hostEvent.id}`}>
+            <div css={eventName}>
+              {hostEvent.eventName.charAt(0).toUpperCase()}
+              {hostEvent.eventName.slice(1)}
+            </div>
+            <div css={eventInfo}>
+              When: ' '{hostEvent.dateTime.slice(8, 10)}
+              '/'
+              {hostEvent.dateTime.slice(5, 7)}
+              '/'
+              {hostEvent.dateTime.slice(0, 4)} at' '
+              {hostEvent.dateTime.slice(11, 16).replace(':', 'h')}
+              <br />
+              Where: {hostEvent.location.charAt(0).toUpperCase()}
+              {hostEvent.location.slice(1)}
+              <br />
+              Info: {hostEvent.description}
+            </div>
+          </div>
+        );
+      })}
+
+      <div css={status}>Attending</div>
+
+      {props.foundAttendingGuests?.map((foundAttendingGuest) => {
+        if (foundAttendingGuest) {
           return (
-            <div key={`hostEvent-${hostEvent.id}`}>
-              <div css={eventName}>
-                {hostEvent.eventName.charAt(0).toUpperCase()}
-                {hostEvent.eventName.slice(1)}
-              </div>
-              <div css={eventInfo}>
-                When: {''}
-                {hostEvent.dateTime.slice(8, 10)}
-                {'/'}
-                {hostEvent.dateTime.slice(5, 7)}
-                {'/'}
-                {hostEvent.dateTime.slice(0, 4)} at{' '}
-                {hostEvent.dateTime.slice(11, 16).replace(':', 'h')}
-                <br />
-                Where: {hostEvent.location.charAt(0).toUpperCase()}
-                {hostEvent.location.slice(1)}
-                <br />
-                Info: {hostEvent.description}
-              </div>
+            <div key={`guest-${foundAttendingGuest.id}`}>
+              <ul>
+                <li>
+                  {foundAttendingGuest.guestFirstName.charAt(0).toUpperCase()}
+                  {foundAttendingGuest.guestFirstName.slice(1)}{' '}
+                  {foundAttendingGuest.guestLastName.charAt(0).toUpperCase()}
+                  {foundAttendingGuest.guestLastName.slice(1)}
+                </li>
+              </ul>
             </div>
           );
-        })}
+        }
+      })}
 
-        <div css={status}>Attending</div>
+      <div css={status}>Invited</div>
 
-        {props.foundAttendingGuests?.map((foundAttendingGuest) => {
-          if (!foundAttendingGuest) {
-            return <div>Looks like noone has rsvp d yet...</div>;
-          }
-          if (foundAttendingGuest) {
-            return (
-              <div key={`guest-${foundAttendingGuest.id}`}>
-                <ul>
-                  <li>
-                    {foundAttendingGuest.guestFirstName.charAt(0).toUpperCase()}
-                    {foundAttendingGuest.guestFirstName.slice(1)}{' '}
-                    {foundAttendingGuest.guestLastName.charAt(0).toUpperCase()}
-                    {foundAttendingGuest.guestLastName.slice(1)}
-                  </li>
-                </ul>
-              </div>
-            );
-          }
-        })}
-
-        <div css={status}>Invited</div>
-
-        {props.foundInvitedGuests?.map((foundInvitedGuest) => {
-          if (foundInvitedGuest) {
-            return (
-              <div key={`guest-${foundInvitedGuest.id}`}>
-                <ul>
-                  <li>
-                    {foundInvitedGuest.guestFirstName.charAt(0).toUpperCase()}
-                    {foundInvitedGuest.guestFirstName.slice(1)}{' '}
-                    {foundInvitedGuest.guestLastName.charAt(0).toUpperCase()}
-                    {foundInvitedGuest.guestLastName.slice(1)}{' '}
-                  </li>
-                </ul>
-              </div>
-            );
-          }
-        })}
-      </div>
-    );
-  }
+      {props.foundInvitedGuests?.map((foundInvitedGuest) => {
+        if (foundInvitedGuest) {
+          return (
+            <div key={`guest-${foundInvitedGuest.id}`}>
+              <ul>
+                <li>
+                  {foundInvitedGuest.guestFirstName.charAt(0).toUpperCase()}
+                  {foundInvitedGuest.guestFirstName.slice(1)}{' '}
+                  {foundInvitedGuest.guestLastName.charAt(0).toUpperCase()}
+                  {foundInvitedGuest.guestLastName.slice(1)}{' '}
+                </li>
+              </ul>
+            </div>
+          );
+        }
+      })}
+    </div>
+  );
+  // }
 }
 
 export async function getServerSideProps(
@@ -293,27 +282,11 @@ export async function getServerSideProps(
     };
   }
 
-  if (!foundInvitedGuestIds) {
-    return {
-      props: {
-        error: 'no guests invited',
-      },
-    };
-  }
-
   if (typeof foundAttendingGuestIds === 'undefined') {
     context.res.statusCode = 404;
     return {
       props: {
         error: 'no guest id with that id found',
-      },
-    };
-  }
-
-  if (!foundAttendingGuestIds) {
-    return {
-      props: {
-        error: 'no guests attending',
       },
     };
   }

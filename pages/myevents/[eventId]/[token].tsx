@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import RSVPNo from '../../../components/rsvp_no';
 import RSVPYes from '../../../components/rsvp_yes';
@@ -70,8 +68,8 @@ export default function GuestToken(props: Props) {
   console.log(isAttending);
 
   async function updateAttendanceHandler() {
-    console.log('clicked');
-    const updateAttendanceResponse = await fetch(`/api/attendance`, {
+    // console.log('clicked');
+    await fetch(`/api/attendance`, {
       method: 'PUT',
       headers: {
         'content-type': 'application/json',
@@ -138,7 +136,7 @@ export default function GuestToken(props: Props) {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export function getServerSideProps(context: GetServerSidePropsContext) {
   // console.log('context.query 1', context.query);
   const eventId = parseIntFromContextQuery(context.query.eventId);
   // console.log('eventId', eventId);
@@ -185,6 +183,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const foundGuestToken = getGuestByEventIdAndGuestToken(eventId, guestToken);
+
+  console.log(foundGuestToken);
 
   console.log(context.query);
   console.log('guest token', guestToken);

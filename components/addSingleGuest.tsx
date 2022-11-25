@@ -1,16 +1,10 @@
 import { css } from '@emotion/react';
-import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Guest } from '../database/guests';
-import { getValidSessionByToken } from '../database/sessions';
-import { User } from '../database/users';
 import { AddGuestResponseBody } from '../pages/api/guests';
 
-const lighterText = css`
-  color: #e9d8ac;
-`;
 const buttonStyle = css`
   background-color: #d9d9d974;
   color: #e9d8ac;
@@ -48,7 +42,6 @@ export default function AddSingleGuest(props: Props) {
   const [guestLastName, setGuestLastName] = useState('');
   const [guestPhoneNumber, setGuestPhoneNumber] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
-  const router = useRouter();
 
   async function guestHandler() {
     const addGuestResponse = await fetch('/api/guests', {
