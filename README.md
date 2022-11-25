@@ -7,15 +7,14 @@ Diego is a full stack web application to create events, invite guests and monito
 - React
 - JavaScript
 - Emotion/react
-- MaterialUI
-- Cloudinary
 - PostgreSQL
 - Typescript
 - REST API
-- Fly.io
 - Figma (Design of website, API Flowchart)
 - Notion (Timeline, Break down of to do's)
 - DrawSQL
+- Adobe Illustrator
+- Fly.io (once deployed)
 
 ## Pages & 
 
