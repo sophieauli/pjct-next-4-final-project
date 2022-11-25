@@ -1,4 +1,4 @@
-Diego is a full stack web application to create events, invite guests and monitor rsvps. Users can create an account and their events will be diplayed on their homepage. What's still left to be implemented is an sms API to allow users to send each of their guests an invitation with a custom linke allowing them to rsvp. 
+Diego is a full stack web application to create events, invite guests and monitor rsvps. Users can create an account and their events will be diplayed on their homepage. What's still left to be implemented is an sms API to allow users to send each of their guests an invitation with a custom link to a page where they can rsvp. 
 
 
 ## Technologies
