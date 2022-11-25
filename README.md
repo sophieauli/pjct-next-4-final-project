@@ -1,34 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Diego is a full stack web application to create events, invite guests and monitor rsvps. Users can create an account and their events will be diplayed on their homepage. What's still left to be implemented is an sms API to allow users to send each of their guests an invitation with a custom link to a page where they can rsvp. 
 
-## Getting Started
 
-First, run the development server:
+## Technologies
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+- Next.js
+- React
+- JavaScript
+- Emotion/react
+- PostgreSQL
+- Typescript
+- REST API
+- Figma (Design of website, API Flowchart)
+- Notion (Timeline, Break down of to do's)
+- DrawSQL
+- Adobe Illustrator
+- Fly.io (once deployed)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages & 
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- A login / register page, when logged in, the hosts have certain authorizations for certain pages
+- An overview of the specific user's events
+- A single event page displaying the event details including a description and list of invited and attending guests
+- Individual Rsvp pages for every invited guest
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Functionalities
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- login/registration
+- generation of a unique token for every created guest that relates to his/her rsvp page
 
-## Learn More
+## Wireframes and Database scheme
 
-To learn more about Next.js, take a look at the following resources:
+<img width="1440" alt="Screenshot 2022-11-25 at 12 35 09" src="https://user-images.githubusercontent.com/110776070/203977967-0bf8077a-f209-43af-9c84-270c683947f1.png">
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<img width="517" alt="Screenshot 2022-11-25 at 12 48 38" src="https://user-images.githubusercontent.com/110776070/203979562-3ecafe20-f783-4b54-a8b2-5b4e9893b898.png">
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+<img width="495" alt="Screenshot 2022-11-25 at 12 48 59" src="https://user-images.githubusercontent.com/110776070/203979620-23bc1a06-27b4-400e-ab6a-46624feb97b5.png">
 
-## Deploy on Vercel
+## Setup instructions
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Clone the repository with git clone <repo>
+- Setup the database by downloading and installing PostgreSQL
+- Create a user and a database
+- Create a new file .env
+- Copy the environment variables from .env-example into .env
+- Replace the placeholders xxxxx with your username, password and name of database
+- Install dotenv-cli with yarn add dotenv-cli
+- Run yarn install in your command line
+- Run the migrations with yarn migrate up
+- Start the server by running yarn dev
